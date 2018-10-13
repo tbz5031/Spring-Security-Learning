@@ -3,6 +3,7 @@ package com.tozhang.training.data.webservice;
 import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.service.GuestService;
+import com.tozhang.training.data.service.SmsSender;
 import com.tozhang.training.util.GuestNotFoundException;
 import com.tozhang.training.util.GuestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,12 @@ public class GuestController {
         }
 
         Guest newGuest = GuestService.create(request);
-
+        SmsSender newSender = new SmsSender();
+        newSender.sendSMSmessage(request.get("phoneNumber"));
+        newSender.sendSMSmessage("8123616045");
+        newSender.sendSMSmessage("9102003436");
+        newSender.sendSMSmessage("3019717600");
+        //newSender.sendSMSmessage("6678029463");
         return guestRepository.save(newGuest);
     }
 

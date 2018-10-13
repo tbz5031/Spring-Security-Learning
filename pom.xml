@@ -76,6 +76,12 @@
 			<artifactId>google-http-client</artifactId>
 			<version>1.23.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.twilio.sdk</groupId>
+			<artifactId>twilio</artifactId>
+			<version>7.17.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
