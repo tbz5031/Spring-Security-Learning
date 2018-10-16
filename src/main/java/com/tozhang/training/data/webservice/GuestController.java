@@ -83,14 +83,14 @@ public class GuestController {
     }
     //update a guest
     @PutMapping("/guests/{id}")
-    public Guest updateNote(@PathVariable(value = "id") Long guestId,
+    public ResponseEntity updateNote(@PathVariable(value = "id") Long guestId,
                            @Valid @RequestBody Guest guest) {
 
         Guest updateguest = guestRepository.findOne(guestId);
 
         if(updateguest==null) {
-            logger.trace("None existing user");
-            return updateguest;
+            logger.info("User not exist");
+            return new Output().Wrong(HttpStatus.NOT_FOUND,"user not exist");
         }
         else{
             updateguest.setFirstName(guest.getFirstName());
@@ -101,7 +101,7 @@ public class GuestController {
             updateguest.setState(guest.getState());
             updateguest.setPhoneNumber(guest.getPhoneNumber());
             Guest guest1 = guestRepository.save(updateguest);
-            return guest1;
+            return new Output().Correct(HttpStatus.OK,updateguest,"successfully");
         }
     }
 
@@ -110,10 +110,10 @@ public class GuestController {
     public ResponseEntity<?> deleteNote(@PathVariable(value = "id") Long noteId) {
         Guest guest = guestRepository.findOne(noteId);
 
-        if (guest == null) return ResponseEntity.ok().body("fail");
+        if (guest == null) return new Output().Wrong(HttpStatus.BAD_REQUEST,"fail");
         else {
             guestRepository.delete(guest);
-            return ResponseEntity.ok().body("Success");
+            return new Output().Correct(HttpStatus.OK,"successful");
         }
     }
 
