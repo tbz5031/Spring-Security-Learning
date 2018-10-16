@@ -2,7 +2,7 @@ package com.tozhang.training.util;
 
 import org.springframework.http.HttpStatus;
 
-public class ApiErrorResponse {
+public class ApiResponse {
 
     private HttpStatus status;
     private String error_code;
@@ -27,7 +27,7 @@ public class ApiErrorResponse {
 
     // getter and setters
     //Builder
-    public static final class ApiErrorResponseBuilder {
+    public static final class ApiResponseBuilder {
         private HttpStatus status;
         private String error_code;
         private String message;
@@ -49,40 +49,40 @@ public class ApiErrorResponse {
             return detail;
         }
 
-        public ApiErrorResponseBuilder() {
+        public ApiResponseBuilder() {
         }
 
-        public static ApiErrorResponseBuilder anApiErrorResponse() {
-            return new ApiErrorResponseBuilder();
+        public static ApiResponseBuilder anApiResponse() {
+            return new ApiResponseBuilder();
         }
 
-        public ApiErrorResponseBuilder withStatus(HttpStatus status) {
+        public ApiResponseBuilder withStatus(HttpStatus status) {
             this.status = status;
             return this;
         }
 
-        public ApiErrorResponseBuilder withError_code(String error_code) {
+        public ApiResponseBuilder withError_code(String error_code) {
             this.error_code = error_code;
             return this;
         }
 
-        public ApiErrorResponseBuilder withMessage(String message) {
+        public ApiResponseBuilder withMessage(String message) {
             this.message = message;
             return this;
         }
 
-        public ApiErrorResponseBuilder withDetail(Object detail) {
+        public ApiResponseBuilder withDetail(Object detail) {
             this.detail = detail;
             return this;
         }
 
-        public ApiErrorResponse build() {
-            ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
-            apiErrorResponse.status = this.status;
-            apiErrorResponse.error_code = this.error_code;
-            apiErrorResponse.detail = this.detail;
-            apiErrorResponse.message = this.message;
-            return apiErrorResponse;
+        public ApiResponse build() {
+            ApiResponse apiResponse = new ApiResponse();
+            apiResponse.status = this.status;
+            apiResponse.error_code = this.error_code;
+            apiResponse.detail = this.detail;
+            apiResponse.message = this.message;
+            return apiResponse;
         }
     }
 }

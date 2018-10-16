@@ -7,7 +7,7 @@ public class Output {
 
     public ResponseEntity<Object> Wrong(HttpStatus status,String str){
 
-        ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()
+        ApiResponse response =new ApiResponse.ApiResponseBuilder()
                 .withStatus(status).withMessage(str)
                 .withError_code(status.BAD_REQUEST.name()).build();
 
@@ -30,7 +30,7 @@ public class Output {
 //            e.printStackTrace();
 //        }
 
-        ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()
+        ApiResponse response =new ApiResponse.ApiResponseBuilder()
                 .withStatus(status).withMessage(str).withDetail(body)
                 .withError_code(status.name()).build();
 
@@ -39,7 +39,7 @@ public class Output {
 
     public ResponseEntity<Object> Correct(HttpStatus status, String str){
 
-        ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()
+        ApiResponse response =new ApiResponse.ApiResponseBuilder()
                 .withStatus(status).withMessage(str)
                 .withError_code(status.name()).build();
 
