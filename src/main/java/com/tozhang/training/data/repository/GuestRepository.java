@@ -13,5 +13,6 @@ import java.util.List;
 public interface GuestRepository extends JpaRepository<Guest,Long> {
     Guest findByEmailAddress(String emailAddress);
     Guest findByEmailAddressAndCountry(String email, String country);
+    Guest findByFirstName(String Name);
 }
 //,JpaRepository<Guest,Long>

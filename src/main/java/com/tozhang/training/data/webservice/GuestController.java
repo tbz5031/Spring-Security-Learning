@@ -4,9 +4,11 @@ import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.service.GuestService;
 import com.tozhang.training.data.service.SmsSender;
-import com.tozhang.training.util.GuestNotFoundException;
-import com.tozhang.training.util.GuestUtil;
+import com.tozhang.training.util.Output;
+import com.tozhang.training.util.ServiceRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +16,10 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.log4j.Logger;
+
+import static org.springframework.hateoas.jaxrs.JaxRsLinkBuilder.linkTo;
 
 @RestController
 @RequestMapping("/api")
@@ -40,32 +45,41 @@ public class GuestController {
     //create a new guest test
     @PostMapping("/guest")
     public Object createGuest(@Valid @RequestBody Map<String,String> payload) {
-        logger.debug("Received POST request");
+        logger.info("Received POST request");
         HashMap<String,String> request = new HashMap<>(payload);
-        //GuestService guestService = new GuestService();
-        Guest guest = new Guest();
-        Guest currentGuest = guestRepository.findByEmailAddress(request.get("emailAddress"));
-
-        //Guest testGuest = guestRepository.findByEmailAddressAndCountry(request.get("emailAddress"),request.get("country"));
-
-        if(GuestUtil.ifExistGuest(currentGuest)) {
-            throw new GuestNotFoundException("exist user");
+        Guest guest = guestRepository.findByEmailAddress(request.get("emailAddress"));
+        if (guest != null) {
+            logger.info("user already exists");
+            return new Output().Wrong(HttpStatus.BAD_REQUEST,"User already exist");
         }
-
-        Guest newGuest = GuestService.create(request);
-        SmsSender newSender = new SmsSender();
-        newSender.sendSMSmessage(request.get("phoneNumber"));
-        newSender.sendSMSmessage("8123616045");
-        newSender.sendSMSmessage("9102003436");
-        newSender.sendSMSmessage("3019717600");
-        //newSender.sendSMSmessage("6678029463");
-        return guestRepository.save(newGuest);
+        else{
+            Guest newGuest = GuestService.create(request);
+            SmsSender newSender = new SmsSender();
+            newSender.sendSMSmessage(request.get("phoneNumber"));
+//        newSender.sendSMSmessage("8123616045");
+//        newSender.sendSMSmessage("9102003436");
+//        newSender.sendSMSmessage("3019717600");
+//        //newSender.sendSMSmessage("6678029463");
+            guestRepository.save(newGuest);
+            logger.info("guest successfully added");
+            return new Output().Correct(HttpStatus.OK,newGuest,"successfully added");
+            //return new ResponseEntity<>(newGuest, new HttpHeaders(), HttpStatus.OK);
+        }
     }
 
-    //get a single guest
+    //get a single guest find by id
     @GetMapping("/guests/{id}")
-    public Guest getNoteById(@PathVariable(value = "id") Long guestId) {
-        return guestRepository.findOne(guestId);
+    public ResponseEntity<Object> getGuestById(@PathVariable(value = "id") Long guestId) {
+        //Guest guest= new Guest();
+        //Guest guest = guestRepository.findOne(guestId);
+        Guest guest = guestRepository.findOne(guestId);
+        if (guest==null)
+        {
+            //throw new ServiceRuntimeException("error");
+            return new Output().Wrong(HttpStatus.NOT_FOUND,"user not found");
+        }
+        else
+            return new Output().Correct(HttpStatus.OK,guest,"successfully founded");
     }
     //update a guest
     @PutMapping("/guests/{id}")
@@ -102,4 +116,5 @@ public class GuestController {
             return ResponseEntity.ok().body("Success");
         }
     }
+
 }
