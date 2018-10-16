@@ -1,5 +1,6 @@
 package com.tozhang.training.data.repository;
 import com.tozhang.training.data.entity.Reservation;
+import com.tozhang.training.data.entity.Room;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;

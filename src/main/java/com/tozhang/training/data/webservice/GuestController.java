@@ -5,9 +5,7 @@ import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.service.GuestService;
 import com.tozhang.training.data.service.SmsSender;
 import com.tozhang.training.util.Output;
-import com.tozhang.training.util.ServiceRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +17,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import static org.springframework.hateoas.jaxrs.JaxRsLinkBuilder.linkTo;
 
 @RestController
 @RequestMapping("/api")
@@ -31,8 +28,9 @@ public class GuestController {
 
     //Get all guest
     @GetMapping("/guests")
-    public List<Guest> getAllGuests() {
-        return guestRepository.findAll();
+    public ResponseEntity<Object> getAllGuests() {
+        List<Guest> ls_guests= guestRepository.findAll();
+        return new Output().Correct(HttpStatus.OK,ls_guests,"Successful");
     }
 
 //    //create a new guest valid one
@@ -83,7 +81,7 @@ public class GuestController {
     }
     //update a guest
     @PutMapping("/guests/{id}")
-    public ResponseEntity updateNote(@PathVariable(value = "id") Long guestId,
+    public ResponseEntity updateGuest(@PathVariable(value = "id") Long guestId,
                            @Valid @RequestBody Guest guest) {
 
         Guest updateguest = guestRepository.findOne(guestId);
@@ -107,7 +105,7 @@ public class GuestController {
 
     //delete a guest
     @DeleteMapping("/guests/{id}")
-    public ResponseEntity<?> deleteNote(@PathVariable(value = "id") Long noteId) {
+    public ResponseEntity<?> deleteGuest(@PathVariable(value = "id") Long noteId) {
         Guest guest = guestRepository.findOne(noteId);
 
         if (guest == null) return new Output().Wrong(HttpStatus.BAD_REQUEST,"fail");
