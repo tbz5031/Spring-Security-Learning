@@ -9,7 +9,7 @@ public class Output {
 
         ApiResponse response =new ApiResponse.ApiResponseBuilder()
                 .withStatus(status).withMessage(str)
-                .withError_code(status.BAD_REQUEST.name()).build();
+                .withError_code(status.name()).build();
 
         return new ResponseEntity<Object>(response,response.getStatus());
     }
