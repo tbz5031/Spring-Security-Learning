@@ -18,21 +18,6 @@ public class Output {
     }
 
     public ResponseEntity<Object> Correct(HttpStatus status,Object body, String str){
-
-        // convert json to object
-//        ObjectMapper mapper = new ObjectMapper();
-//        ObjectMapper mapper = new ObjectMapper();
-//        Object value = mapper.readValue(jsonSource , javaObject);
-
-        // convert object to json
-//        String json = null;
-//        ObjectMapper mapper = new ObjectMapper();
-//        try{
-//            json = mapper.writeValueAsString(body);
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//        }
-
         ApiResponse response =new ApiResponse.ApiResponseBuilder()
                 .withStatus(status).withMessage(str).withDetail(body)
                 .withError_code(status.name()).build();

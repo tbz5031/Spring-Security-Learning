@@ -7,6 +7,7 @@ import com.tozhang.training.data.service.GuestService;
 import com.tozhang.training.data.service.RoomService;
 import com.tozhang.training.data.service.SmsSender;
 import com.tozhang.training.util.Output;
+import com.tozhang.training.util.ServiceRuntimeException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.xml.ws.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +64,16 @@ public class RoomController {
             return new Output().Wrong(HttpStatus.NOT_FOUND,"room not found");
     }
 
+    @GetMapping(value = "/room",params = "id")
+    //@ResponseBody
+    public ResponseEntity<Object> getroomByIdParam(@RequestParam(value = "id") Long id){
+        Room ls_room = roomRepository.findOne(id);
+        if (ls_room != null)
+            return new Output().Correct(HttpStatus.OK,ls_room,"Successful");
+        else
+            throw new ServiceRuntimeException("Room by id "+id +" is not found");
+    }
+
     @PostMapping(value = "/room")
     public Object createRoom(@Valid @RequestBody Map<String,String> payload){
         logger.info("Received POST request");
@@ -80,7 +92,7 @@ public class RoomController {
 
         if(updateroom==null) {
             logger.info("User not exist");
-            return new Output().Wrong(HttpStatus.NOT_FOUND,"user not exist");
+            throw new ServiceRuntimeException("Room not found");
         }
         else{
             updateroom.setName(room.getName());
