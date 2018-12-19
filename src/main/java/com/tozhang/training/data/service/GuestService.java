@@ -6,8 +6,8 @@ import com.tozhang.training.util.ServiceRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.stereotype.Service;
 
-import javax.xml.ws.Service;
 import java.util.Map;
 
 public class GuestService {
@@ -33,6 +33,7 @@ public class GuestService {
         guest.setFirstName(request.get("firstName").toString());
         guest.setEmailAddress(request.get("emailAddress").toString());
         guest.setCountry(request.get("country").toString());
+        guest.setPassword(request.get("password").toString());
         return guest;
     }
 }

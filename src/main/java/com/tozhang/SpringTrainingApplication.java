@@ -6,14 +6,20 @@ import com.tozhang.training.util.Output;
 import com.tozhang.training.util.ServiceRuntimeException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 @SpringBootApplication
 @EnableJpaAuditing
 public class SpringTrainingApplication {
 
+	@Bean
+	public BCryptPasswordEncoder bCryptPasswordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 	public static void main(String[] args) {
 			SpringApplication.run(SpringTrainingApplication.class, args);
 	}

@@ -28,6 +28,8 @@ public class Guest {
     private String state;
     @Column(name="PHONE_NUMBER")
     private String phoneNumber;
+    @Column(name="password")
+    private String password;
 
     public long getId() {
         return id;
@@ -94,4 +96,11 @@ public class Guest {
     }
 
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
