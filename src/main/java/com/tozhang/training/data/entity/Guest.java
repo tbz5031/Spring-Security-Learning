@@ -1,10 +1,15 @@
 package com.tozhang.training.data.entity;
 
+import org.apache.catalina.Group;
+import org.apache.catalina.Role;
+import org.apache.catalina.User;
+import org.apache.catalina.UserDatabase;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
+import java.util.Iterator;
 
 @Entity
 @Table(name="GUEST")
@@ -31,13 +36,6 @@ public class Guest {
     @Column(name="password")
     private String password;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -95,7 +93,6 @@ public class Guest {
         this.phoneNumber = phoneNumber;
     }
 
-
     public String getPassword() {
         return password;
     }
@@ -103,4 +100,5 @@ public class Guest {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }

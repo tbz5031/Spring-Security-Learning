@@ -79,7 +79,7 @@ public class GuestController {
         return new Output().Correct(HttpStatus.OK,newGuest,"successfully added");
     }
 
-    @PostMapping("/signIn")
+    /*@PostMapping("/signIn")
     public Object guestLogin(@Valid @RequestBody Map<String,String> payload){
         logger.info("Received POST request");
         HashMap<String,String> request = new HashMap<>(payload);
@@ -87,8 +87,9 @@ public class GuestController {
         if (guest == null) {
             throw new UsernameNotFoundException(request.get("emailAddress"));
         }
+
         return new User(guest.getEmailAddress(), guest.getPassword(), emptyList());
-    }
+    }*/
 
     //get a single guest find by id
     @GetMapping("/guests/{id}")
