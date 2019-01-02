@@ -20,7 +20,7 @@ public class GuestService {
         else {
             guest = GuestService.transfer(request);
             SmsSender newSender = new SmsSender();
-            newSender.sendSMSmessage(request.get("phoneNumber").toString());
+            //newSender.sendSMSmessage(request.get("phoneNumber").toString());
         }
         return guest;
     }

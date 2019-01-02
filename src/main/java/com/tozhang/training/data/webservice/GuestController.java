@@ -1,29 +1,30 @@
 package com.tozhang.training.data.webservice;
+import com.google.gson.Gson;
 
 import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.service.GuestService;
-import com.tozhang.training.data.service.SmsSender;
 import com.tozhang.training.util.Output;
-import com.tozhang.training.util.RestResponseEntityExceptionHandler;
 import com.tozhang.training.util.ServiceRuntimeException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
+import org.json.JSONObject;
 import javax.validation.Valid;
-import javax.xml.ws.Service;
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.springframework.web.context.request.WebRequest;
 
+import static com.tozhang.training.data.security.SecurityConstants.EXPIRATION_TIME;
+import static com.tozhang.training.data.security.SecurityConstants.SECRET;
 import static java.util.Collections.emptyList;
 
 
@@ -67,7 +68,7 @@ public class GuestController {
         Guest newGuest = new Guest();
         try{
             newGuest = GuestService.create(request,guest);
-            newGuest.setPassword(bCryptPasswordEncoder.encode(newGuest.getPassword()));
+            //newGuest.setPassword(bCryptPasswordEncoder.encode(newGuest.getPassword()));
             guestRepository.save(newGuest);
             }
         catch (ServiceRuntimeException e){
@@ -79,17 +80,27 @@ public class GuestController {
         return new Output().Correct(HttpStatus.OK,newGuest,"successfully added");
     }
 
-    /*@PostMapping("/signIn")
-    public Object guestLogin(@Valid @RequestBody Map<String,String> payload){
-        logger.info("Received POST request");
-        HashMap<String,String> request = new HashMap<>(payload);
-        Guest guest = guestRepository.findByEmailAddress(request.get("emailAddress"));
-        if (guest == null) {
-            throw new UsernameNotFoundException(request.get("emailAddress"));
-        }
+    @PostMapping("/signIn")
+    public Object guestLogin(@Valid @RequestBody Map<String,String> payload) throws IOException {
+        logger.info("Received SignIn");
 
-        return new User(guest.getEmailAddress(), guest.getPassword(), emptyList());
-    }*/
+        HashMap<String,String> request = new HashMap<>(payload);
+        String token = null;
+        Guest guest = guestRepository.findByEmailAddress(request.get("emailAddress"));
+        if(guest!=null && guest.getPassword().equals(payload.get("password"))){
+             token = Jwts.builder()
+                    .setSubject("new")
+                    .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                    .signWith(SignatureAlgorithm.HS512, SECRET)
+                    .compact();
+            logger.info("token: " + token);
+        }
+        else return new Output().Wrong(HttpStatus.BAD_REQUEST,"Not valid credential or username");
+
+        guest.setAccess_token(token);
+
+        return new Output().Correct(HttpStatus.OK,guest,"Login Successfully");
+    }
 
     //get a single guest find by id
     @GetMapping("/guests/{id}")

@@ -25,6 +25,8 @@ public class Guest {
     private String lastName;
     @Column(name="EMAIL_ADDRESS",unique = true)
     private String emailAddress;
+    @Column(name = "accessToken")
+    private String access_token;
     @Column(name="ADDRESS")
     private String address;
     @Column(name="COUNTRY")
@@ -101,4 +103,12 @@ public class Guest {
         this.password = password;
     }
 
+
+    public String getAccess_token() {
+        return access_token;
+    }
+
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
+    }
 }
