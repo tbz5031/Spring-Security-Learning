@@ -6,7 +6,8 @@ import com.tozhang.training.data.repository.RoomRepository;
 import com.tozhang.training.data.service.GuestService;
 import com.tozhang.training.data.service.RoomService;
 import com.tozhang.training.data.service.SmsSender;
-import com.tozhang.training.util.Output;
+
+import com.tozhang.training.util.IDMResponse;
 import com.tozhang.training.util.ServiceRuntimeException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class RoomController {
     @GetMapping(value = "/rooms")
     public ResponseEntity<Object> getAllRooms() {
         List<Room> ls_room = roomRepository.findAll();
-        return new Output().Correct(HttpStatus.OK,ls_room,"Successful");
+        return new IDMResponse().Correct(HttpStatus.OK,ls_room,"Successful");
     }
 
 //    @GetMapping(value = "/rooms/{name}")
@@ -50,18 +51,18 @@ public class RoomController {
     public ResponseEntity<Object> getroomByNameParam(@RequestParam(value = "name") String name){
         List<Room> ls_room = roomRepository.findByName(name);
         if (ls_room != null)
-            return new Output().Correct(HttpStatus.OK,ls_room,"Successful");
+            return new IDMResponse().Correct(HttpStatus.OK,ls_room,"Successful");
         else
-            return new Output().Wrong(HttpStatus.NOT_FOUND,"room not found");
+            return new IDMResponse().Wrong(HttpStatus.NOT_FOUND,"room not found");
     }
     @GetMapping(value = "/room",params = "number")
     //@ResponseBody
     public ResponseEntity<Object> getroomByNumberParam(@RequestParam(value = "number") String name){
         Room ls_room = roomRepository.findByNumber(name);
         if (ls_room != null)
-            return new Output().Correct(HttpStatus.OK,ls_room,"Successful");
+            return new IDMResponse().Correct(HttpStatus.OK,ls_room,"Successful");
         else
-            return new Output().Wrong(HttpStatus.NOT_FOUND,"room not found");
+            return new IDMResponse().Wrong(HttpStatus.NOT_FOUND,"room not found");
     }
 
     @GetMapping(value = "/room",params = "id")
@@ -69,7 +70,7 @@ public class RoomController {
     public ResponseEntity<Object> getroomByIdParam(@RequestParam(value = "id") Long id){
         Room ls_room = roomRepository.findOne(id);
         if (ls_room != null)
-            return new Output().Correct(HttpStatus.OK,ls_room,"Successful");
+            return new IDMResponse().Correct(HttpStatus.OK,ls_room,"Successful");
         else
             throw new ServiceRuntimeException("Room by id "+id +" is not found");
     }
@@ -82,7 +83,7 @@ public class RoomController {
 
         roomRepository.save(newRoom);
         logger.info("guest successfully added");
-        return new Output().Correct(HttpStatus.OK,newRoom,"successfully added");
+        return new IDMResponse().Correct(HttpStatus.OK,newRoom,"successfully added");
     }
     @PutMapping("/rooms/{id}")
     public ResponseEntity updateRoom(@PathVariable(value = "id") Long roomId,
@@ -98,7 +99,7 @@ public class RoomController {
             updateroom.setName(room.getName());
             updateroom.setBedInfo(room.getBedInfo());
             updateroom.setNumber(room.getNumber());
-            return new Output().Correct(HttpStatus.OK,updateroom,"successfully");
+            return new IDMResponse().Correct(HttpStatus.OK,updateroom,"successfully");
         }
     }
 
@@ -107,10 +108,10 @@ public class RoomController {
     public ResponseEntity<?> deleteRoom(@PathVariable(value = "id") Long noteId) {
         Room room = roomRepository.findOne(noteId);
 
-        if (room == null) return new Output().Wrong(HttpStatus.BAD_REQUEST,"fail");
+        if (room == null) return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"fail");
         else {
             roomRepository.delete(room);
-            return new Output().Correct(HttpStatus.OK,"successful");
+            return new IDMResponse().Correct(HttpStatus.OK,"successful");
         }
     }
 }

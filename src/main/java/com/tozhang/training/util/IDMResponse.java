@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public class Output {
+public class IDMResponse {
 
     public ResponseEntity<Object> Wrong(HttpStatus status,String str){
 

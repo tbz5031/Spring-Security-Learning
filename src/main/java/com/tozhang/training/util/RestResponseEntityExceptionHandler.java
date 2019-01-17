@@ -22,6 +22,6 @@ public class RestResponseEntityExceptionHandler
     protected ResponseEntity<Object> handleConflict(
             ServiceRuntimeException ex, WebRequest request) {
         logger.error(ex.getMessage(), ex.fillInStackTrace());
-        return new Output().Wrong(HttpStatus.NOT_FOUND, ex.getMessage());
+        return new IDMResponse().Wrong(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 }

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.service.GuestService;
-import com.tozhang.training.util.Output;
+import com.tozhang.training.util.IDMResponse;
 import com.tozhang.training.util.ServiceRuntimeException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -49,7 +49,7 @@ public class GuestController {
     @GetMapping("/guests")
     public ResponseEntity<Object> getAllGuests() {
         List<Guest> ls_guests= guestRepository.findAll();
-        return new Output().Correct(HttpStatus.OK,ls_guests,"Successful");
+        return new IDMResponse().Correct(HttpStatus.OK,ls_guests,"Successful");
     }
 
 //    //create a new guest valid one
@@ -73,11 +73,11 @@ public class GuestController {
             }
         catch (ServiceRuntimeException e){
             logger.error(e.getMessage(),e.fillInStackTrace());
-            return new Output().Wrong(HttpStatus.BAD_REQUEST,"User already exist");
+            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"User already exist");
         }catch (Exception ex){
             logger.error(ex.getMessage(),ex.fillInStackTrace());
         }
-        return new Output().Correct(HttpStatus.OK,newGuest,"successfully added");
+        return new IDMResponse().Correct(HttpStatus.OK,newGuest,"successfully added");
     }
 
     @PostMapping("/signIn")
@@ -95,11 +95,11 @@ public class GuestController {
                     .compact();
             logger.info("token: " + token);
         }
-        else return new Output().Wrong(HttpStatus.BAD_REQUEST,"Not valid credential or username");
+        else return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Not valid credential or username");
 
         guest.setAccess_token(token);
 
-        return new Output().Correct(HttpStatus.OK,guest,"Login Successfully");
+        return new IDMResponse().Correct(HttpStatus.OK,guest,"Login Successfully");
     }
 
     //get a single guest find by id
@@ -111,10 +111,10 @@ public class GuestController {
         if (guest==null)
         {
             throw new ServiceRuntimeException("error");
-            //return new Output().Wrong(HttpStatus.NOT_FOUND,"user not found");
+            //return new IDMResponse().Wrong(HttpStatus.NOT_FOUND,"user not found");
         }
         else
-            return new Output().Correct(HttpStatus.OK,guest,"successfully founded");
+            return new IDMResponse().Correct(HttpStatus.OK,guest,"successfully founded");
     }
     //update a guest
     @PutMapping("/guests/{id}")
@@ -125,7 +125,7 @@ public class GuestController {
 
         if(updateguest==null) {
             logger.info("User not exist");
-            return new Output().Wrong(HttpStatus.NOT_FOUND,"user not exist");
+            return new IDMResponse().Wrong(HttpStatus.NOT_FOUND,"user not exist");
         }
         else{
             updateguest.setFirstName(guest.getFirstName());
@@ -136,7 +136,7 @@ public class GuestController {
             updateguest.setState(guest.getState());
             updateguest.setPhoneNumber(guest.getPhoneNumber());
             Guest guest1 = guestRepository.save(updateguest);
-            return new Output().Correct(HttpStatus.OK,updateguest,"successfully");
+            return new IDMResponse().Correct(HttpStatus.OK,updateguest,"successfully");
         }
     }
 
@@ -145,10 +145,10 @@ public class GuestController {
     public ResponseEntity<?> deleteGuest(@PathVariable(value = "id") Long noteId) {
         Guest guest = guestRepository.findOne(noteId);
 
-        if (guest == null) return new Output().Wrong(HttpStatus.BAD_REQUEST,"fail");
+        if (guest == null) return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"fail");
         else {
             guestRepository.delete(guest);
-            return new Output().Correct(HttpStatus.OK,"successful");
+            return new IDMResponse().Correct(HttpStatus.OK,"successful");
         }
     }
 

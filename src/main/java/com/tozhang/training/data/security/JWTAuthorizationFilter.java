@@ -1,6 +1,8 @@
 package com.tozhang.training.data.security;
 
+import com.tozhang.training.util.ServiceRuntimeException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,13 +37,22 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     }
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
+        String user = null;
         if (token != null) {
             // parse the token.
-            String user = Jwts.parser()
-                    .setSigningKey(SECRET)
-                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
-                    .getBody()
-                    .getSubject();
+            try {
+                user = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody().getSubject();
+            }
+            catch (io.jsonwebtoken.SignatureException s){
+                logger.error("Invalid access Token");
+                throw new ServiceRuntimeException("Invalid Access token");
+            }catch(ArrayIndexOutOfBoundsException ae){
+                logger.error("Invalid access Token");
+                throw new ServiceRuntimeException("Invalid Access token");
+            }catch (MalformedJwtException me){
+                logger.error("Invalid access Token");
+                throw new ServiceRuntimeException("Invalid Access token");
+            }
             if (user != null) {
                 return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
             }

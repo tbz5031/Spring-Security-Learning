@@ -1,9 +1,5 @@
 package com.tozhang;
 
-
-import com.tozhang.training.data.service.GuestService;
-import com.tozhang.training.util.Output;
-import com.tozhang.training.util.ServiceRuntimeException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
