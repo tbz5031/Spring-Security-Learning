@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import static com.tozhang.training.data.security.SecurityConstants.*;
 @EnableWebSecurity
@@ -37,7 +38,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     }
     @Bean
-    public AccessDeniedHandler accessDeniedHandler() {
+    public AuthenticationFailureHandler customAuthenticationFailureHandler() {
         return new CustomAccessDeniedHandler();
     }
 

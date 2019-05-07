@@ -4,6 +4,8 @@ import com.tozhang.training.util.IDMResponse;
 import com.tozhang.training.util.ServiceRuntimeException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -38,8 +40,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         UsernamePasswordAuthenticationToken authentication = null;
         try {
             authentication = getAuthentication(req);
-        } catch (IDMResponse idmResponse) {
-            idmResponse.printStackTrace();
+        } catch (ServiceRuntimeException se) {
+            ResponseEntity<Object> response = new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Invalid Access Token");
             return;
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
