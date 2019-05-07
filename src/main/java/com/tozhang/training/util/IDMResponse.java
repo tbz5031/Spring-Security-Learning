@@ -6,9 +6,20 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public class IDMResponse {
+public class IDMResponse extends ServiceRuntimeException {
 
-    public ResponseEntity<Object> Wrong(HttpStatus status,String str){
+    public IDMResponse(){
+        super();
+    }
+
+
+    public IDMResponse(String invalid_access_token) {
+        ApiResponse response =new ApiResponse.ApiResponseBuilder()
+                .withStatus(HttpStatus.BAD_REQUEST).withMessage(invalid_access_token)
+                .withError_code(HttpStatus.BAD_REQUEST.toString()).build();
+    }
+
+    public ResponseEntity<Object> Wrong(HttpStatus status, String str){
 
         ApiResponse response =new ApiResponse.ApiResponseBuilder()
                 .withStatus(status).withMessage(str)

@@ -1,5 +1,6 @@
 package com.tozhang.training.data.security;
 
+import com.tozhang.training.util.IDMResponse;
 import com.tozhang.training.util.ServiceRuntimeException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -31,11 +32,17 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             chain.doFilter(req, res);
             return;
         }
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+        UsernamePasswordAuthenticationToken authentication = null;
+        try {
+            authentication = getAuthentication(req);
+        } catch (IDMResponse idmResponse) {
+            idmResponse.printStackTrace();
+            return;
+        }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
     }
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) throws IDMResponse {
         String token = request.getHeader(HEADER_STRING);
         String user = null;
         if (token != null) {
