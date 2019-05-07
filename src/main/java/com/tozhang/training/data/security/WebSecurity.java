@@ -1,6 +1,8 @@
 package com.tozhang.training.data.security;
 
 import com.tozhang.training.util.CustomAccessDeniedHandler;
+import com.tozhang.training.util.IDMResponse;
+import com.tozhang.training.util.ServiceRuntimeException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -30,15 +32,15 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, SIGN_IN_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .exceptionHandling().accessDeniedHandler(accessDeniedHandler())
-                .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager()));
+
     }
     @Bean
-    public AccessDeniedHandler accessDeniedHandler(){
+    public AccessDeniedHandler accessDeniedHandler() {
         return new CustomAccessDeniedHandler();
     }
+
 
 //    @Override
 //    public void configure(AuthenticationManagerBuilder auth) throws Exception {

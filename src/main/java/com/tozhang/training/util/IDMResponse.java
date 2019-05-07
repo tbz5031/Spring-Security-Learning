@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public class IDMResponse extends ServiceRuntimeException {
+public class IDMResponse extends ServiceRuntimeException{
 
     public IDMResponse(){
         super();

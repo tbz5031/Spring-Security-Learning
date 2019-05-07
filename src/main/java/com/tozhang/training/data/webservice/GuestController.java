@@ -14,13 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.json.JSONObject;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -111,10 +107,11 @@ public class GuestController {
     }
     //update a guest
     @PutMapping("/guests/{id}")
-    public ResponseEntity updateGuest(@PathVariable(value = "id") Long guestId,
+    public ResponseEntity updateGuest(@RequestParam Map<String,String> allParams,
+                                      @RequestHeader Map<String,String> header,
                            @Valid @RequestBody Guest guest) {
 
-        Guest updateguest = guestRepository.findOne(guestId);
+        Guest updateguest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
 
         if(updateguest==null) {
             logger.info("User not exist");
@@ -135,8 +132,9 @@ public class GuestController {
 
     //delete a guest
     @DeleteMapping("/guests/{id}")
-    public ResponseEntity<?> deleteGuest(@PathVariable(value = "id") Long noteId) {
-        Guest guest = guestRepository.findOne(noteId);
+    public ResponseEntity<?> deleteGuest(@RequestParam Map<String,String> allParams,
+                                         @RequestHeader Map<String,String> header) {
+        Guest guest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
 
         if (guest == null) return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"fail");
         else {

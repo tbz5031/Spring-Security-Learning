@@ -67,8 +67,8 @@ public class RoomController {
 
     @GetMapping(value = "/room",params = "id")
     //@ResponseBody
-    public ResponseEntity<Object> getroomByIdParam(@RequestParam(value = "id") Long id){
-        Room ls_room = roomRepository.findOne(id);
+    public ResponseEntity<Object> getroomByIdParam(@RequestParam(value = "name") Long id){
+        Room ls_room = roomRepository.findByName(id);
         if (ls_room != null)
             return new IDMResponse().Correct(HttpStatus.OK,ls_room,"Successful");
         else
