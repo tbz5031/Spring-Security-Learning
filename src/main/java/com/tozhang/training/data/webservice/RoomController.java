@@ -57,8 +57,8 @@ public class RoomController {
     }
     @GetMapping(value = "/room",params = "number")
     //@ResponseBody
-    public ResponseEntity<Object> getroomByNumberParam(@RequestParam(value = "number") String name){
-        Room ls_room = roomRepository.findByNumber(name);
+    public ResponseEntity<Object> getroomByNumberParam(@RequestParam(value = "number") Long id){
+        Room ls_room = roomRepository.findByNumber(id);
         if (ls_room != null)
             return new IDMResponse().Correct(HttpStatus.OK,ls_room,"Successful");
         else
@@ -68,7 +68,7 @@ public class RoomController {
     @GetMapping(value = "/room",params = "id")
     //@ResponseBody
     public ResponseEntity<Object> getroomByIdParam(@RequestParam(value = "name") Long id){
-        Room ls_room = roomRepository.findByName(id);
+        Room ls_room = roomRepository.findByNumber(id);
         if (ls_room != null)
             return new IDMResponse().Correct(HttpStatus.OK,ls_room,"Successful");
         else
@@ -89,7 +89,7 @@ public class RoomController {
     public ResponseEntity updateRoom(@PathVariable(value = "id") Long roomId,
                                      @Valid @RequestBody Room room) {
 
-        Room updateroom = roomRepository.findOne(roomId);
+        Room updateroom = roomRepository.findByNumber(roomId);
 
         if(updateroom==null) {
             logger.info("User not exist");
@@ -106,7 +106,7 @@ public class RoomController {
     //delete a guest
     @DeleteMapping("/rooms/{id}")
     public ResponseEntity<?> deleteRoom(@PathVariable(value = "id") Long noteId) {
-        Room room = roomRepository.findOne(noteId);
+        Room room = roomRepository.findByNumber(noteId);
 
         if (room == null) return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"fail");
         else {

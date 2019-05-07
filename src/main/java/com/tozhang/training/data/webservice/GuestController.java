@@ -1,5 +1,4 @@
 package com.tozhang.training.data.webservice;
-import com.google.gson.Gson;
 
 import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.repository.GuestRepository;
@@ -7,8 +6,6 @@ import com.tozhang.training.data.security.JWTService;
 import com.tozhang.training.data.service.GuestService;
 import com.tozhang.training.util.IDMResponse;
 import com.tozhang.training.util.ServiceRuntimeException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +16,6 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-
-import static com.tozhang.training.data.security.SecurityConstants.EXPIRATION_TIME;
-import static com.tozhang.training.data.security.SecurityConstants.SECRET;
-import static java.util.Collections.emptyList;
-
 
 @RestController
 @RequestMapping("/guest")

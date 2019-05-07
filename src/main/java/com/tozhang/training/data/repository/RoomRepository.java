@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room,Long> {
-    Room findByNumber(String number);
+    Room findByNumber(Long number);
     List<Room> findByName(String name);
 
 }
