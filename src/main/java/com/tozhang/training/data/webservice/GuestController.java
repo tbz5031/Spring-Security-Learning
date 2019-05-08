@@ -27,13 +27,6 @@ public class GuestController {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     //private WebRequest ex;
 
-
-    public GuestController(GuestRepository guestRepository,
-                          BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.guestRepository = guestRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
-
     //Get all guest
     @GetMapping("/guests")
     public ResponseEntity<Object> getAllGuests() {
@@ -44,7 +37,7 @@ public class GuestController {
     //create a new guest test
     @PostMapping("/signUp")
     public Object createGuest(@Valid @RequestBody Map<String,String> payload) {
-        logger.info("Received POST request");
+        logger.info("SignUp Process");
         HashMap<String,String> request = new HashMap<>(payload);
         Guest guest = guestRepository.findByEmailAddress(request.get("emailAddress"));
         Guest newGuest = new Guest();
@@ -64,7 +57,7 @@ public class GuestController {
 
     @PostMapping("/signIn")
     public Object guestLogin(@Valid @RequestBody Map<String,String> payload) throws IOException {
-        logger.info("Received SignIn");
+        logger.info("SignIn Process");
 
         HashMap<String,String> request = new HashMap<>(payload);
         String token = null;
@@ -80,17 +73,15 @@ public class GuestController {
 
     //get a single guest find by id
     @GetMapping("")
-    public ResponseEntity<Object> getGuestById(@RequestParam Map<String,String> allParams,
+    public Object getGuestById(@RequestParam Map<String,String> allParams,
                                                @RequestHeader Map<String,String> header) {
-        logger.info("Start to process GET method");
-        System.out.println(allParams);
-        System.out.println(header);
+        logger.info("Get Guest Process");
+        Guest guest = null;
         if(JWTService.jwtValidator(header,allParams)){
-            Guest guest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
+                guest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
             if (guest==null)
             {
-                throw new ServiceRuntimeException("Could not find User");
-                //return new IDMResponse().Wrong(HttpStatus.NOT_FOUND,"user not found");
+                return new IDMResponse().Correct(HttpStatus.OK,null,"Successful");
             }
             else
                 return new IDMResponse().Correct(HttpStatus.OK,guest,"successfully founded");
@@ -98,41 +89,50 @@ public class GuestController {
             return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Invalid access token");
     }
     //update a guest
-    @PutMapping("/guests/{id}")
-    public ResponseEntity updateGuest(@RequestParam Map<String,String> allParams,
-                                      @RequestHeader Map<String,String> header,
-                           @Valid @RequestBody Guest guest) {
+    @PutMapping("/update")
+    public ResponseEntity updateGuest(@Valid @RequestBody Map<String,String> payload,
+                                      @RequestHeader Map<String,String> header) {
+        logger.info("Update User Process");
 
-        Guest updateguest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
+        HashMap<String,String> allParams = new HashMap<>(payload);
 
-        if(updateguest==null) {
-            logger.info("User not exist");
-            return new IDMResponse().Wrong(HttpStatus.NOT_FOUND,"user not exist");
-        }
-        else{
-            updateguest.setFirstName(guest.getFirstName());
-            updateguest.setLastName(guest.getLastName());
-            updateguest.setEmailAddress(guest.getEmailAddress());
-            updateguest.setAddress(guest.getAddress());
-            updateguest.setCountry(guest.getCountry());
-            updateguest.setState(guest.getState());
-            updateguest.setPhoneNumber(guest.getPhoneNumber());
-            Guest guest1 = guestRepository.save(updateguest);
-            return new IDMResponse().Correct(HttpStatus.OK,updateguest,"successfully");
-        }
+        if(JWTService.jwtValidator(header,allParams)) {
+            Guest updateguest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
+            if (updateguest == null) {
+                logger.info("User not exist");
+                return new IDMResponse().Wrong(HttpStatus.NOT_FOUND, "user not exist");
+            } else {
+                updateguest.setFirstName(allParams.get("firstName"));
+                updateguest.setLastName(allParams.get("lastName"));
+                updateguest.setEmailAddress(allParams.get("emailAddress"));
+                updateguest.setAddress(allParams.get("address"));
+                updateguest.setCountry(allParams.get("country"));
+                updateguest.setState(allParams.get("state"));
+                updateguest.setPhoneNumber(allParams.get("phoneNumber"));
+                guestRepository.save(updateguest);
+                return new IDMResponse().Correct(HttpStatus.OK, updateguest, "successfully");
+            }
+        }else
+            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Invalid access token");
     }
 
     //delete a guest
-    @DeleteMapping("/guests/{id}")
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteGuest(@RequestParam Map<String,String> allParams,
                                          @RequestHeader Map<String,String> header) {
-        Guest guest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
+        logger.info("Delete User Process");
 
-        if (guest == null) return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"fail");
-        else {
-            guestRepository.delete(guest);
-            return new IDMResponse().Correct(HttpStatus.OK,"successful");
-        }
+        if(JWTService.jwtValidator(header,allParams)) {
+            Guest tempguest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
+            if (tempguest == null) {
+                logger.info("User does not exist");
+                return new IDMResponse().Wrong(HttpStatus.NOT_FOUND, "user not exist");
+            } else {
+                guestRepository.delete(tempguest);
+                return new IDMResponse().Correct(HttpStatus.OK, "successfully Delete");
+            }
+        }else
+            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Invalid access token");
     }
 
 }

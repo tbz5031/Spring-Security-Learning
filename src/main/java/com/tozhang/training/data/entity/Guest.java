@@ -23,6 +23,8 @@ public class Guest {
     private String firstName;
     @Column(name="LAST_NAME")
     private String lastName;
+    @Column(name ="ACCOUNT",unique = true)
+    private String account;
     @Column(name="EMAIL_ADDRESS",unique = true)
     private String emailAddress;
     @Column(name = "accessToken")
@@ -38,6 +40,13 @@ public class Guest {
     @Column(name="password")
     private String password;
 
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String firstName) {
+        this.account = account;
+    }
 
     public String getFirstName() {
         return firstName;
