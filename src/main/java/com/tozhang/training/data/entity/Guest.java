@@ -1,24 +1,22 @@
 package com.tozhang.training.data.entity;
 
-import org.apache.catalina.Group;
-import org.apache.catalina.Role;
-import org.apache.catalina.User;
-import org.apache.catalina.UserDatabase;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
-import java.util.Iterator;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name="GUEST")
 @EntityListeners(AuditingEntityListener.class)
 public class Guest {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="GUEST_ID")
     private long id;
+    @Column(name = "STATUS")
+    private String status="inactive";
     @Column(name="FIRST_NAME")
     private String firstName;
     @Column(name="LAST_NAME")
@@ -27,8 +25,8 @@ public class Guest {
     private String account;
     @Column(name="EMAIL_ADDRESS",unique = true)
     private String emailAddress;
-    @Column(name = "accessToken")
-    private String access_token;
+    @Column(name = "refreshToken")
+    private String refreshToken;
     @Column(name="ADDRESS")
     private String address;
     @Column(name="COUNTRY")
@@ -39,6 +37,12 @@ public class Guest {
     private String phoneNumber;
     @Column(name="password")
     private String password;
+    @Column(name="LoginTs")
+    private Timestamp loginTs;
+    @Column(name="CreatedTs")
+    private Timestamp createdTs;
+    @Column(name="logoutTs")
+    private Timestamp logoutTs;
 
     public String getAccount() {
         return account;
@@ -113,11 +117,43 @@ public class Guest {
     }
 
 
-    public String getAccess_token() {
-        return access_token;
+    public long getId() {
+        return id;
     }
 
-    public void setAccess_token(String access_token) {
-        this.access_token = access_token;
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Timestamp getLoginTs() {
+        return loginTs;
+    }
+
+    public void setLoginTs(Timestamp loginTs) {
+        this.loginTs = loginTs;
+    }
+
+    public Timestamp getCreatedTs() {
+        return createdTs;
+    }
+
+    public void setCreatedTs(Timestamp createdTs) {
+        this.createdTs = createdTs;
+    }
+
+    public Timestamp getLogoutTs() {
+        return logoutTs;
+    }
+
+    public void setLogoutTs(Timestamp logoutTs) {
+        this.logoutTs = logoutTs;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

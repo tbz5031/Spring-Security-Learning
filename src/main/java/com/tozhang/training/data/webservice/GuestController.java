@@ -1,5 +1,6 @@
 package com.tozhang.training.data.webservice;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.security.JWTService;
@@ -42,8 +43,7 @@ public class GuestController {
         Guest guest = guestRepository.findByEmailAddress(request.get("emailAddress"));
         Guest newGuest = new Guest();
         try{
-            newGuest = GuestService.create(request,guest);
-            //newGuest.setPassword(bCryptPasswordEncoder.encode(newGuest.getPassword()));
+            newGuest = GuestService.createnewguest(request,guest);
             guestRepository.save(newGuest);
             }
         catch (ServiceRuntimeException e){
@@ -51,6 +51,7 @@ public class GuestController {
             return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"User already exist");
         }catch (Exception ex){
             logger.error(ex.getMessage(),ex.fillInStackTrace());
+            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Other Error");
         }
         return new IDMResponse().Correct(HttpStatus.OK,newGuest,"successfully added");
     }
@@ -67,8 +68,9 @@ public class GuestController {
         }
         else return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Not valid credential or username");
 
-        guest.setAccess_token(token);
-        return new IDMResponse().Correct(HttpStatus.OK,guest,"Login Successfully");
+        ObjectMapper oMapper = new ObjectMapper();
+        Map<String, String> result = (Map<String, String>) oMapper.convertValue(guest, Guest.class);
+        return new IDMResponse().Correct(HttpStatus.OK,result,"Login Successfully");
     }
 
     //get a single guest find by id

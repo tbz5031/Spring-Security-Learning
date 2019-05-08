@@ -8,23 +8,29 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+
+import java.util.Date;
 import java.util.Map;
 
 public class GuestService {
 
     GuestService gs = new GuestService();
 
-    public static Guest create(Map request,Guest cur) {
+    public static Guest createnewguest(Map request,Guest cur) {
         Guest guest = new Guest();
         if (cur!=null) throw new ServiceRuntimeException("User Already Exists");
         else {
             guest = GuestService.transfer(request);
             SmsSender newSender = new SmsSender();
-            //newSender.sendSMSmessage(request.get("phoneNumber").toString());
+            newSender.sendSMSmessage(request.get("phoneNumber").toString());
         }
         return guest;
     }
     protected static Guest transfer(Map request){
+        Date date= new Date();
+        long time = date.getTime();
+        Timestamp ts = new Timestamp(time);
         Guest guest = new Guest();
         guest.setAddress(request.get("address").toString());
         guest.setPhoneNumber(request.get("phoneNumber").toString());
@@ -34,6 +40,12 @@ public class GuestService {
         guest.setEmailAddress(request.get("emailAddress").toString());
         guest.setCountry(request.get("country").toString());
         guest.setPassword(request.get("password").toString());
+        guest.setCreatedTs(ts);
+        return guest;
+    }
+
+    public static Guest updateLoginStatus(Guest guest){
+
         return guest;
     }
 }
