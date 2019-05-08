@@ -1,15 +1,8 @@
 package com.tozhang.training.data.service;
 
 import com.tozhang.training.data.entity.Guest;
-import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.util.ServiceRuntimeException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.stereotype.Service;
-
 import java.sql.Timestamp;
-
 import java.util.Date;
 import java.util.Map;
 
