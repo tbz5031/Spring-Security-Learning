@@ -16,7 +16,7 @@ public class SmsSender {
         Message message = Message
                 .creator(new PhoneNumber(phoneNumber), // to
                         new PhoneNumber("+18142818158"), // from
-                        "你好，我是小小飞，你和晓飞的情话，被我承包了")
+                        "Thank you for registering on Tong.Inc ")
                 .create();
 
         System.out.println(message.getSid());

@@ -21,9 +21,7 @@ public class GuestService {
         return guest;
     }
     protected static Guest transfer(Map request){
-        Date date= new Date();
-        long time = date.getTime();
-        Timestamp ts = new Timestamp(time);
+
         Guest guest = new Guest();
         guest.setAddress(request.get("address").toString());
         guest.setPhoneNumber(request.get("phoneNumber").toString());
@@ -33,12 +31,15 @@ public class GuestService {
         guest.setEmailAddress(request.get("emailAddress").toString());
         guest.setCountry(request.get("country").toString());
         guest.setPassword(request.get("password").toString());
-        guest.setCreatedTs(ts);
+        guest.setDeviceId(request.get("deviceId").toString());
+        guest.setAccount(request.get("account").toString());
+        guest.setCreatedTs(System.currentTimeMillis());
         return guest;
     }
 
-    public static Guest updateLoginStatus(Guest guest){
-
+    public static Guest updateLoginTimeAndStatus(Guest guest){
+        guest.setLoginTs(System.currentTimeMillis());
+        guest.setStatus("active");
         return guest;
     }
 }

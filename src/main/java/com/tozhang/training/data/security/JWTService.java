@@ -1,36 +1,44 @@
 package com.tozhang.training.data.security;
 
-import com.tozhang.training.data.webservice.GuestController;
-import com.tozhang.training.util.ServiceRuntimeException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.tozhang.training.data.repository.GuestRepository;
+import io.jsonwebtoken.*;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.Null;
 import java.util.Date;
 import java.util.Map;
 
 import static com.tozhang.training.data.security.SecurityConstants.EXPIRATION_TIME;
 import static com.tozhang.training.data.security.SecurityConstants.SECRET;
 
+@Service
 public class JWTService {
     private static final Logger logger = Logger.getLogger(JWTService.class);
-    public static String jwtIssuer(Map<String,String> payload){
+    @Autowired
+    private static GuestRepository guestRepository;
+
+    @Autowired
+    public void setUserRepo(GuestRepository guestRepository) {
+        JWTService.guestRepository = guestRepository;
+    }
+
+    public String jwtIssuer(Map<String,Object> payload){
         String token = null;
         token = Jwts.builder()
-                .setId(payload.get("emailAddress"))
-                .setSubject(payload.get("account"))
+                .setHeader(payload)
+                .setId(payload.get("emailAddress").toString())
+                .setSubject(payload.get("account").toString())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
         logger.info("token is successfully issued" );
         return token;
     }
-    public static boolean jwtValidator(Map<String,String> header,Map<String,String> param){
-        String token = header.get("authorization").split(" ")[1];
+    public boolean jwtValidator(Map<String,String> reqheader,Map<String,String> param){
+        String token = reqheader.get("authorization").split(" ")[1];
         Claims claims = null;
+        JWTService jwtService = new JWTService();
         try {
             claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
         }
@@ -50,9 +58,22 @@ public class JWTService {
             logger.error("Please Provide correct token");
             logger.error(ne,ne.fillInStackTrace());
         }
-        if(claims.getId().equals(param.get("emailAddress"))&&claims.getSubject().equals(param.get("account")))
+        if(claims.getId().equals(param.get("emailAddress"))&&claims.getSubject().equals(param.get("account"))&&jwtService.decodeLoginTs(reqheader,param))
             return true;
         else
             return false;
+    }
+    public boolean decodeLoginTs(Map<String,String> reqheader,Map<String,String> param){
+        try {
+            Object loginTsDb = guestRepository.findByEmailAddress(param.get("emailAddress")).getLoginTs();
+            String token = reqheader.get("authorization").split(" ")[1];
+            Object LoginTs = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getHeader().get("loginTs");
+            if (loginTsDb.equals(LoginTs)) return true;
+            else return false;
+        }
+        catch (NullPointerException e){
+            logger.error(e,e.fillInStackTrace());
+            return false;
+        }
     }
 }

@@ -7,10 +7,11 @@ import javax.persistence.Table;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+
 @Entity
 @Table(name="GUEST")
 @EntityListeners(AuditingEntityListener.class)
-public class Guest {
+public class Guest{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="GUEST_ID")
@@ -38,17 +39,19 @@ public class Guest {
     @Column(name="password")
     private String password;
     @Column(name="LoginTs")
-    private Timestamp loginTs;
+    private Long loginTs;
     @Column(name="CreatedTs")
-    private Timestamp createdTs;
+    private Long createdTs;
     @Column(name="logoutTs")
-    private Timestamp logoutTs;
+    private Long logoutTs;
+    @Column(name="deviceId")
+    private String deviceId;
 
     public String getAccount() {
         return account;
     }
 
-    public void setAccount(String firstName) {
+    public void setAccount(String account) {
         this.account = account;
     }
 
@@ -125,27 +128,27 @@ public class Guest {
         this.id = id;
     }
 
-    public Timestamp getLoginTs() {
+    public Long getLoginTs() {
         return loginTs;
     }
 
-    public void setLoginTs(Timestamp loginTs) {
+    public void setLoginTs(Long loginTs) {
         this.loginTs = loginTs;
     }
 
-    public Timestamp getCreatedTs() {
+    public Long getCreatedTs() {
         return createdTs;
     }
 
-    public void setCreatedTs(Timestamp createdTs) {
+    public void setCreatedTs(Long createdTs) {
         this.createdTs = createdTs;
     }
 
-    public Timestamp getLogoutTs() {
+    public Long getLogoutTs() {
         return logoutTs;
     }
 
-    public void setLogoutTs(Timestamp logoutTs) {
+    public void setLogoutTs(Long logoutTs) {
         this.logoutTs = logoutTs;
     }
 
@@ -156,4 +159,22 @@ public class Guest {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+
 }

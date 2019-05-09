@@ -5,8 +5,10 @@ import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.security.JWTService;
 import com.tozhang.training.data.service.GuestService;
+import com.tozhang.training.util.GuestUtil;
 import com.tozhang.training.util.IDMResponse;
 import com.tozhang.training.util.ServiceRuntimeException;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +20,19 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import static com.tozhang.training.data.security.SecurityConstants.SECRET;
+
 @RestController
 @RequestMapping("/guest")
 public class GuestController {
     private static final Logger logger = Logger.getLogger(GuestController.class);
 
     @Autowired
+    JWTService jwtService;
+
+    @Autowired
     GuestRepository guestRepository;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    //private WebRequest ex;
+
 
     //Get all guest
     @GetMapping("/guests")
@@ -41,7 +47,7 @@ public class GuestController {
         logger.info("SignUp Process");
         HashMap<String,String> request = new HashMap<>(payload);
         Guest guest = guestRepository.findByEmailAddress(request.get("emailAddress"));
-        Guest newGuest = new Guest();
+        Guest newGuest;
         try{
             newGuest = GuestService.createnewguest(request,guest);
             guestRepository.save(newGuest);
@@ -53,23 +59,30 @@ public class GuestController {
             logger.error(ex.getMessage(),ex.fillInStackTrace());
             return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Other Error");
         }
-        return new IDMResponse().Correct(HttpStatus.OK,newGuest,"successfully added");
+        return new IDMResponse().Correct(HttpStatus.OK, newGuest,"successfully added");
     }
 
     @PostMapping("/signIn")
     public Object guestLogin(@Valid @RequestBody Map<String,String> payload) throws IOException {
         logger.info("SignIn Process");
-
+        jwtService = new JWTService();
         HashMap<String,String> request = new HashMap<>(payload);
         String token = null;
+        String refresh_token = null;
         Guest guest = guestRepository.findByEmailAddress(request.get("emailAddress"));
+        // transfer guest object to hashmap
+        Map<String, Object> result = GuestUtil.mappingHelper(guest);
         if(guest!=null && guest.getPassword().equals(payload.get("password"))){
-             token = JWTService.jwtIssuer(request);
+             guest = GuestService.updateLoginTimeAndStatus(guest);
+             guestRepository.save(guest);
+             result.put("loginTs",guest.getLoginTs());
+             token = jwtService.jwtIssuer(result);
+             //todo Need to implement refreshtoken.
+             //refresh_token = JWTService.jwtIssuer()
         }
         else return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Not valid credential or username");
 
-        ObjectMapper oMapper = new ObjectMapper();
-        Map<String, String> result = (Map<String, String>) oMapper.convertValue(guest, Guest.class);
+        result.put("accessToken",token);
         return new IDMResponse().Correct(HttpStatus.OK,result,"Login Successfully");
     }
 
@@ -78,13 +91,12 @@ public class GuestController {
     public Object getGuestById(@RequestParam Map<String,String> allParams,
                                                @RequestHeader Map<String,String> header) {
         logger.info("Get Guest Process");
+        jwtService = new JWTService();
         Guest guest = null;
-        if(JWTService.jwtValidator(header,allParams)){
-                guest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
+        if(jwtService.jwtValidator(header,allParams)){
+            guest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
             if (guest==null)
-            {
                 return new IDMResponse().Correct(HttpStatus.OK,null,"Successful");
-            }
             else
                 return new IDMResponse().Correct(HttpStatus.OK,guest,"successfully founded");
         }else
@@ -98,7 +110,7 @@ public class GuestController {
 
         HashMap<String,String> allParams = new HashMap<>(payload);
 
-        if(JWTService.jwtValidator(header,allParams)) {
+        if(jwtService.jwtValidator(header,allParams)) {
             Guest updateguest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
             if (updateguest == null) {
                 logger.info("User not exist");
@@ -124,13 +136,15 @@ public class GuestController {
                                          @RequestHeader Map<String,String> header) {
         logger.info("Delete User Process");
 
-        if(JWTService.jwtValidator(header,allParams)) {
+        if(jwtService.jwtValidator(header,allParams)) {
             Guest tempguest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
             if (tempguest == null) {
                 logger.info("User does not exist");
                 return new IDMResponse().Wrong(HttpStatus.NOT_FOUND, "user not exist");
             } else {
-                guestRepository.delete(tempguest);
+                tempguest.setStatus("inactive");
+                tempguest.setLogoutTs(System.currentTimeMillis());
+                guestRepository.save(tempguest);
                 return new IDMResponse().Correct(HttpStatus.OK, "successfully Delete");
             }
         }else
