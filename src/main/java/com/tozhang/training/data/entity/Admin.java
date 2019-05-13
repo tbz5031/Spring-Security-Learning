@@ -1,11 +1,14 @@
 package com.tozhang.training.data.entity;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name="ADMIN")
 public class Admin {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ADMIN_ID")
@@ -30,7 +33,103 @@ public class Admin {
     private Long createdTs;
     @Column(name="logoutTs")
     private Long logoutTs;
-    @Column(name="deviceId")
-    private String deviceId;
+    @Column(name="isFirst")
+    private Boolean isFirst = false;
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Long getLoginTs() {
+        return loginTs;
+    }
+
+    public void setLoginTs(Long loginTs) {
+        this.loginTs = loginTs;
+    }
+
+    public Long getCreatedTs() {
+        return createdTs;
+    }
+
+    public void setCreatedTs(Long createdTs) {
+        this.createdTs = createdTs;
+    }
+
+    public Long getLogoutTs() {
+        return logoutTs;
+    }
+
+    public void setLogoutTs(Long logoutTs) {
+        this.logoutTs = logoutTs;
+    }
+
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Boolean getFirst() {
+        return isFirst;
+    }
+
+    public void setFirst(Boolean first) {
+        isFirst = first;
+    }
 }
