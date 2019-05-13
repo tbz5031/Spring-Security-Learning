@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 public class ApiResponse {
 
     private HttpStatus status;
-    private String error_code;
+    private int error_code;
     private String message;
     private Object detail;
 
@@ -13,7 +13,7 @@ public class ApiResponse {
         return status;
     }
 
-    public String getError_code() {
+    public int getError_code() {
         return error_code;
     }
 
@@ -29,7 +29,7 @@ public class ApiResponse {
     //Builder
     public static final class ApiResponseBuilder {
         private HttpStatus status;
-        private String error_code;
+        private int error_code;
         private String message;
         private Object detail;
 
@@ -37,7 +37,7 @@ public class ApiResponse {
             return status;
         }
 
-        public String getError_code() {
+        public int getError_code() {
             return error_code;
         }
 
@@ -61,7 +61,7 @@ public class ApiResponse {
             return this;
         }
 
-        public ApiResponseBuilder withError_code(String error_code) {
+        public ApiResponseBuilder withError_code(int error_code) {
             this.error_code = error_code;
             return this;
         }

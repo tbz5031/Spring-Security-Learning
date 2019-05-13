@@ -16,14 +16,14 @@ public class IDMResponse extends ServiceRuntimeException{
     public IDMResponse(String invalid_access_token) {
         ApiResponse response =new ApiResponse.ApiResponseBuilder()
                 .withStatus(HttpStatus.BAD_REQUEST).withMessage(invalid_access_token)
-                .withError_code(HttpStatus.BAD_REQUEST.toString()).build();
+                .withError_code(HttpStatus.BAD_REQUEST.value()).build();
     }
 
     public ResponseEntity<Object> Wrong(HttpStatus status, String str){
 
         ApiResponse response =new ApiResponse.ApiResponseBuilder()
                 .withStatus(status).withMessage(str)
-                .withError_code(status.name()).build();
+                .withError_code(status.value()).build();
 
         return new ResponseEntity<Object>(response,response.getStatus());
     }
@@ -31,7 +31,7 @@ public class IDMResponse extends ServiceRuntimeException{
     public ResponseEntity<Object> Correct(HttpStatus status,Object body, String str){
         ApiResponse response =new ApiResponse.ApiResponseBuilder()
                 .withStatus(status).withMessage(str).withDetail(body)
-                .withError_code(status.name()).build();
+                .withError_code(status.value()).build();
 
         return new ResponseEntity<Object>(response,response.getStatus());
     }
@@ -40,7 +40,7 @@ public class IDMResponse extends ServiceRuntimeException{
 
         ApiResponse response =new ApiResponse.ApiResponseBuilder()
                 .withStatus(status).withMessage(str)
-                .withError_code(status.name()).build();
+                .withError_code(status.value()).build();
 
         return new ResponseEntity<Object>(response,response.getStatus());
     }
@@ -49,7 +49,7 @@ public class IDMResponse extends ServiceRuntimeException{
 
         ApiResponse response =new ApiResponse.ApiResponseBuilder()
                 .withStatus(status).withMessage(str).withDetail(ls)
-                .withError_code(status.name()).build();
+                .withError_code(status.value()).build();
 
         return new ResponseEntity<Object>(response,response.getStatus());
     }
