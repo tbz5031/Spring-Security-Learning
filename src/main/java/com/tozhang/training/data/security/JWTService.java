@@ -42,11 +42,15 @@ public class JWTService {
         return token;
     }
     public boolean jwtValidator(Map<String,String> reqheader,Map<String,String> param, String secret){
-        String token = reqheader.get("authorization").split(" ")[1];
         Claims claims = null;
         JWTService jwtService = new JWTService();
         try {
+            String token = reqheader.get("authorization").split(" ")[1];
             claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+            if(claims.getId().equals(param.get("emailAddress"))&&claims.getSubject().equals(param.get("account"))&&jwtService.decodeLoginTs(reqheader,param,secret))
+                return true;
+            else
+                return false;
         }
         catch (io.jsonwebtoken.SignatureException s) {
             logger.error("Invalid access Token");
@@ -63,11 +67,9 @@ public class JWTService {
         }catch (NullPointerException ne){
             logger.error("Please Provide correct token");
             logger.error(ne,ne.fillInStackTrace());
-        }
-        if(claims.getId().equals(param.get("emailAddress"))&&claims.getSubject().equals(param.get("account"))&&jwtService.decodeLoginTs(reqheader,param,secret))
-            return true;
-        else
             return false;
+        }
+
     }
     public boolean decodeLoginTs(Map<String,String> reqheader,Map<String,String> param,String secret){
         try {

@@ -48,10 +48,18 @@ public class AdminService extends Admin{
         }
     }
 
+    public Admin createAdmin(Map payload){
+        Admin admin = new Admin();
+        admin.setStatus(Constant.Param.inactive);
+        admin.setPassword(payload.get(Constant.Param.newPasscode).toString());
+        admin.setAdminAccount(payload.get(Constant.Param.newAccount).toString());
+        admin.setFirst(true);
+        return admin;
+    }
+
     public Admin updateAdmin(Map payload){
         Admin admin = adminRepository.findByadminaccount(payload.get(Constant.Param.account).toString());
         if(isPasscodeMatch(admin,payload)||isPasswordMatch(admin,payload)){
-            logger.info("Authentication passed");
             if(checkIfNewAdmin(admin)){
                 admin.setPassword(payload.get(Constant.Param.newPasscode).toString());
                 admin.setAdminAccount(payload.get(Constant.Param.newAccount).toString());

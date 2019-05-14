@@ -3,6 +3,7 @@ package com.tozhang.training.data.entity;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.Map;
 
 @Entity
 @Table(name="ADMIN")
@@ -130,4 +131,6 @@ public class Admin {
     public void setFirst(Boolean first) {
         isFirst = first;
     }
+
+
 }
