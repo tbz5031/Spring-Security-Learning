@@ -1,14 +1,11 @@
 package com.tozhang.training.data.webservice;
 
 import com.tozhang.training.data.entity.Admin;
-import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.repository.AdminRepository;
-import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.security.JWTService;
 import com.tozhang.training.data.security.SecurityConstants;
 import com.tozhang.training.data.service.AdminService;
 import com.tozhang.training.data.service.ConfigProperties;
-import com.tozhang.training.data.service.GuestService;
 import com.tozhang.training.util.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -60,12 +56,11 @@ public class AdminController {
         logger.info("Admin SignIn Process");
         jwtService = new JWTService();
         UtilTools utilTools = new UtilTools();
-        HashMap<String,String> request = new HashMap<String, String>();
         Map<String, Object> result = GuestUtil.mappingHelper(payload);
         String token = null;
         AdminService adminService = new AdminService();
-        if(utilTools.checkParameters(payload, Constant.RequiredParams.guestSignIn)){
-            Admin admin = adminRepository.findByadminaccount(request.get(Constant.Param.account));
+        if(utilTools.checkParameters(payload, Constant.RequiredParams.adminSignIn)){
+            Admin admin = adminRepository.findByadminaccount(payload.get(Constant.Param.account));
             token = jwtService.jwtIssuer(result, SecurityConstants.AdminSECRET);
             admin = adminService.updateLoginTimeAndStatus(admin);
             adminRepository.save(admin);
