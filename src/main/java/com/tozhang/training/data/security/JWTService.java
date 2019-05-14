@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.Map;
 
 import static com.tozhang.training.data.security.SecurityConstants.EXPIRATION_TIME;
-import static com.tozhang.training.data.security.SecurityConstants.SECRET;
 
 @Service
 public class JWTService {
@@ -23,24 +22,24 @@ public class JWTService {
         JWTService.guestRepository = guestRepository;
     }
 
-    public String jwtIssuer(Map<String,Object> payload){
+    public String jwtIssuer(Map<String,Object> payload, String secret){
         String token = null;
         token = Jwts.builder()
                 .setHeader(payload)
                 .setId(payload.get("emailAddress").toString())
                 .setSubject(payload.get("account").toString())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
         logger.info("token is successfully issued" );
         return token;
     }
-    public boolean jwtValidator(Map<String,String> reqheader,Map<String,String> param){
+    public boolean jwtValidator(Map<String,String> reqheader,Map<String,String> param, String secret){
         String token = reqheader.get("authorization").split(" ")[1];
         Claims claims = null;
         JWTService jwtService = new JWTService();
         try {
-            claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
+            claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         }
         catch (io.jsonwebtoken.SignatureException s) {
             logger.error("Invalid access Token");
@@ -58,16 +57,16 @@ public class JWTService {
             logger.error("Please Provide correct token");
             logger.error(ne,ne.fillInStackTrace());
         }
-        if(claims.getId().equals(param.get("emailAddress"))&&claims.getSubject().equals(param.get("account"))&&jwtService.decodeLoginTs(reqheader,param))
+        if(claims.getId().equals(param.get("emailAddress"))&&claims.getSubject().equals(param.get("account"))&&jwtService.decodeLoginTs(reqheader,param,secret))
             return true;
         else
             return false;
     }
-    public boolean decodeLoginTs(Map<String,String> reqheader,Map<String,String> param){
+    public boolean decodeLoginTs(Map<String,String> reqheader,Map<String,String> param,String secret){
         try {
             Object loginTsDb = guestRepository.findByEmailAddress(param.get("emailAddress")).getLoginTs();
             String token = reqheader.get("authorization").split(" ")[1];
-            Object LoginTs = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getHeader().get("loginTs");
+            Object LoginTs = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getHeader().get("loginTs");
             if (loginTsDb.equals(LoginTs)) return true;
             else return false;
         }

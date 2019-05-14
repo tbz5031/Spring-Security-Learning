@@ -5,13 +5,11 @@ import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.repository.AdminRepository;
 import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.security.JWTService;
+import com.tozhang.training.data.security.SecurityConstants;
 import com.tozhang.training.data.service.AdminService;
 import com.tozhang.training.data.service.ConfigProperties;
 import com.tozhang.training.data.service.GuestService;
-import com.tozhang.training.util.Constant;
-import com.tozhang.training.util.GuestUtil;
-import com.tozhang.training.util.IDMResponse;
-import com.tozhang.training.util.UtilTools;
+import com.tozhang.training.util.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -61,11 +59,23 @@ public class AdminController {
     public ResponseEntity<Object> adminLogin(@Valid @RequestBody Map<String,String> payload) throws IOException {
         logger.info("Admin SignIn Process");
         jwtService = new JWTService();
-        HashMap<String,String> request = new HashMap<>(payload);
+        UtilTools utilTools = new UtilTools();
+        HashMap<String,String> request = new HashMap<String, String>();
+        Map<String, Object> result = GuestUtil.mappingHelper(payload);
         String token = null;
-        Admin admin = adminRepository.findByEmailAddress(request.get("emailAddress"));
+        AdminService adminService = new AdminService();
+        if(utilTools.checkParameters(payload, Constant.RequiredParams.guestSignIn)){
+            Admin admin = adminRepository.findByadminaccount(request.get(Constant.Param.account));
+            token = jwtService.jwtIssuer(result, SecurityConstants.AdminSECRET);
+            admin = adminService.updateLoginTimeAndStatus(admin);
+            adminRepository.save(admin);
+            result.put("LoginTs",admin.getLoginTs());
+            result.put("access_token",token);
+        }else
+            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST, "missing parameters");
 
-
+        logger.info("Login Successfully");
+        return new IDMResponse().Correct(HttpStatus.OK,result,"Login Successfully");
 
 
         // transfer guest object to hashmap
@@ -82,7 +92,7 @@ public class AdminController {
 //
 //        result.put("accessToken",token);
 //        return new IDMResponse().Correct(HttpStatus.OK,result,"Login Successfully");
-        return null;
+
     }
 
 
@@ -90,25 +100,22 @@ public class AdminController {
     public ResponseEntity<Object> adminUpdate(@Valid @RequestBody Map<String,String> payload) throws IOException {
         logger.info("Admin SignIn Process");
         AdminService adminService = new AdminService();
-        HashMap<String,String> request = new HashMap<>(payload);
+        HashMap<String, String> request = new HashMap<>(payload);
         UtilTools utilTools = new UtilTools();
-        if(utilTools.checkParameters(payload, Constant.RequiredParams.adminUpdate)){
-            return new IDMResponse().Correct(HttpStatus.OK,"ok");
-        }else
-            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"missing parameters");
+        if (utilTools.checkParameters(payload, Constant.RequiredParams.adminUpdate)) {
+            try{
+                Admin res = adminService.updateAdmin(payload);
+                if (res!=null) return new IDMResponse().Correct(HttpStatus.OK, res,"Admin user updated successfully");
+                else throw new ServiceRuntimeException("Information does not match");
+            }
+            catch (ServiceRuntimeException se){
+                return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST, "parameters wrong");
+            }
 
-
-//        if(payload.containsKey("adminAccount")&&payload.containsKey("passcode")){
-//            Admin admin = adminRepository.findByAccount(payload.get("adminAccount"));
-//            if(adminService.isPasswordMatch(admin,payload)){
-//
-//            }else{
-//                logger.error("password does not match for account" + payload.get("account"));
-//                return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"password does not match");
-//            }
-//        }else
-//            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Missing Parameters");
+        } else
+            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST, "missing parameters");
     }
+
 
 
 

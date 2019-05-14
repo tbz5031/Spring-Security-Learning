@@ -36,7 +36,7 @@ public class ConfigProperties {
         HashMap<String,String> map = new HashMap<>();
         admin.setFirstName("FIRST_NAME");
         admin.setLastName("dsa");
-        admin.setAccount(adminUsername);
+        admin.setAdminAccount(adminUsername);
         admin.setEmailAddress("tozhang@microstrategy.com");
         admin.setPhoneNumber("6666666666");
         admin.setPassword(adminPasscode);

@@ -11,8 +11,8 @@ public interface Constant {
         public static final String country = "country";
         public static final String state = "state";
         public static final String phoneNumber = "phoneNumber";
-        public static final String adminAccount = "adminAccount";
-        public static final String adminPasscode = "adminPasscode";
+        public static final String newAccount = "newAccount";
+        public static final String newPasscode = "newPasscode";
         public static final String ts = "ts";
 
     }
@@ -24,8 +24,9 @@ public interface Constant {
         public static String[] guestGet = { Param.account, Param.emailAddress};
         public static String[] guestPut = { Param.account, Param.emailAddress};
         public static String[] guestDel = { Param.account, Param.emailAddress};
-        public static String[] adminUpdate = {Param.adminAccount,Param.adminPasscode,Param.password, Param.emailAddress,
-                Param.account, Param.phoneNumber};
+        public static String[] adminUpdate = {Param.account, Param.password, Param.emailAddress
+                , Param.phoneNumber};
+        public static String[] adminSignIn = {Param.account,Param.password,Param.emailAddress};
 
     }
 }

@@ -15,7 +15,7 @@ public class UtilTools {
                 if(payload.get(param)==null) throw new ServiceRuntimeException();
                 num++;
             }catch (Exception e){
-                logger.error("Field : "+ param +"is missing");
+                logger.error("Field : "+ param +" is missing");
                 e.printStackTrace();
             }
 //            if(payload.containsKey(param)) {

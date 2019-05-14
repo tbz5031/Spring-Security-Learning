@@ -14,7 +14,7 @@ public class GlobalExceptionController extends Throwable {
     private static final Logger logger = Logger.getLogger(GlobalExceptionController.class);
     @ExceptionHandler(value = ServiceRuntimeException.class)
     public ResponseEntity<Object> exception(ServiceRuntimeException exception) {
-        logger.error("Globally caught exception need to solve later");
+        logger.error("Globally caught exception: need to solve later");
         exception.printStackTrace();
         return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"There is something wrong with our server");
     }

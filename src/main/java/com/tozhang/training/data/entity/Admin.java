@@ -7,8 +7,6 @@ import javax.persistence.*;
 @Entity
 @Table(name="ADMIN")
 public class Admin {
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ADMIN_ID")
@@ -19,8 +17,8 @@ public class Admin {
     private String firstName;
     @Column(name="LAST_NAME")
     private String lastName;
-    @Column(name ="ACCOUNT",unique = true)
-    private String account;
+    @Column(name ="ADMINACCOUNT",unique = true)
+    private String adminaccount;
     @Column(name="EMAIL_ADDRESS",unique = true)
     private String emailAddress;
     @Column(name="PHONE_NUMBER")
@@ -60,12 +58,12 @@ public class Admin {
         this.lastName = lastName;
     }
 
-    public String getAccount() {
-        return account;
+    public String getAdminAccount() {
+        return adminaccount;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setAdminAccount(String adminAccount) {
+        this.adminaccount = adminAccount;
     }
 
     public String getEmailAddress() {

@@ -1,26 +1,22 @@
 package com.tozhang.training.data.webservice;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.security.JWTService;
+import com.tozhang.training.data.security.SecurityConstants;
 import com.tozhang.training.data.service.GuestService;
 import com.tozhang.training.util.GuestUtil;
 import com.tozhang.training.util.IDMResponse;
 import com.tozhang.training.util.ServiceRuntimeException;
-import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-
-import static com.tozhang.training.data.security.SecurityConstants.SECRET;
 
 @RestController
 @RequestMapping("/guest")
@@ -76,13 +72,14 @@ public class GuestController {
              guest = GuestService.updateLoginTimeAndStatus(guest);
              guestRepository.save(guest);
              result.put("loginTs",guest.getLoginTs());
-             token = jwtService.jwtIssuer(result);
+             token = jwtService.jwtIssuer(result,SecurityConstants.GuestSECRET);
+             result.put("accessToken",token);
              //todo Need to implement refreshtoken.
              //refresh_token = JWTService.jwtIssuer()
         }
         else return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Not valid credential or username");
 
-        result.put("accessToken",token);
+
         return new IDMResponse().Correct(HttpStatus.OK,result,"Login Successfully");
     }
 
@@ -93,7 +90,7 @@ public class GuestController {
         logger.info("Get Guest Process");
         jwtService = new JWTService();
         Guest guest = null;
-        if(jwtService.jwtValidator(header,allParams)){
+        if(jwtService.jwtValidator(header,allParams,SecurityConstants.GuestSECRET)){
             guest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
             if (guest==null)
                 return new IDMResponse().Correct(HttpStatus.OK,null,"Successful");
@@ -110,7 +107,7 @@ public class GuestController {
 
         HashMap<String,String> allParams = new HashMap<>(payload);
 
-        if(jwtService.jwtValidator(header,allParams)) {
+        if(jwtService.jwtValidator(header,allParams, SecurityConstants.GuestSECRET)) {
             Guest updateguest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
             if (updateguest == null) {
                 logger.info("User not exist");
@@ -136,7 +133,7 @@ public class GuestController {
                                          @RequestHeader Map<String,String> header) {
         logger.info("Delete User Process");
 
-        if(jwtService.jwtValidator(header,allParams)) {
+        if(jwtService.jwtValidator(header,allParams,SecurityConstants.GuestSECRET)) {
             Guest tempguest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
             if (tempguest == null) {
                 logger.info("User does not exist");

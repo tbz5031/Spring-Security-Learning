@@ -19,4 +19,11 @@ public class GuestUtil {
         Map<String,Object> res = m.convertValue(guest,Map.class);
         return res;
     }
+
+    public static Map<String,Object> mappingHelper(Map map){
+
+        ObjectMapper m = new ObjectMapper();
+        Map<String,Object> res = m.convertValue(map,Map.class);
+        return res;
+    }
 }
