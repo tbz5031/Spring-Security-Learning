@@ -1,5 +1,6 @@
 package com.tozhang.training.data.security;
 
+import com.tozhang.training.data.repository.AdminRepository;
 import com.tozhang.training.data.repository.GuestRepository;
 import io.jsonwebtoken.*;
 import org.apache.log4j.Logger;
@@ -18,8 +19,14 @@ public class JWTService {
     private static GuestRepository guestRepository;
 
     @Autowired
+    private static AdminRepository adminRepository;
+
+    @Autowired
     public void setUserRepo(GuestRepository guestRepository) {
         JWTService.guestRepository = guestRepository;
+    }
+    @Autowired void setAdminRepo(AdminRepository adminRepository){
+        JWTService.adminRepository = adminRepository;
     }
 
     public String jwtIssuer(Map<String,Object> payload, String secret){
@@ -64,9 +71,9 @@ public class JWTService {
     }
     public boolean decodeLoginTs(Map<String,String> reqheader,Map<String,String> param,String secret){
         try {
-            Object loginTsDb = guestRepository.findByEmailAddress(param.get("emailAddress")).getLoginTs();
+            Object loginTsDb = adminRepository.findByEmailAddress(param.get("emailAddress")).getLoginTs();
             String token = reqheader.get("authorization").split(" ")[1];
-            Object LoginTs = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getHeader().get("loginTs");
+            Object LoginTs = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getHeader().get("LoginTs");
             if (loginTsDb.equals(LoginTs)) return true;
             else return false;
         }

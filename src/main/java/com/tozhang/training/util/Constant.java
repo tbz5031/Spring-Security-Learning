@@ -27,6 +27,7 @@ public interface Constant {
         public static String[] adminUpdate = {Param.account, Param.password, Param.emailAddress
                 , Param.phoneNumber};
         public static String[] adminSignIn = {Param.account,Param.password,Param.emailAddress};
+        public static String[] adminGetAll = {Param.account,Param.emailAddress};
 
     }
 }

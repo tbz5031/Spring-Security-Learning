@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -61,35 +62,17 @@ public class AdminController {
         AdminService adminService = new AdminService();
         if(utilTools.checkParameters(payload, Constant.RequiredParams.adminSignIn)){
             Admin admin = adminRepository.findByadminaccount(payload.get(Constant.Param.account));
-            token = jwtService.jwtIssuer(result, SecurityConstants.AdminSECRET);
             admin = adminService.updateLoginTimeAndStatus(admin);
-            adminRepository.save(admin);
             result.put("LoginTs",admin.getLoginTs());
+            token = jwtService.jwtIssuer(result, SecurityConstants.AdminSECRET);
+            adminRepository.save(admin);
             result.put("access_token",token);
         }else
             return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST, "missing parameters");
 
         logger.info("Login Successfully");
         return new IDMResponse().Correct(HttpStatus.OK,result,"Login Successfully");
-
-
-        // transfer guest object to hashmap
-//        Map<String, Object> result = GuestUtil.mappingHelper(guest);
-//        if(guest!=null && guest.getPassword().equals(payload.get("password"))){
-//            guest = GuestService.updateLoginTimeAndStatus(guest);
-//            adminRepository.save(guest);
-//            result.put("loginTs",guest.getLoginTs());
-//            token = jwtService.jwtIssuer(result);
-//            //todo Need to implement refreshtoken.
-//            //refresh_token = JWTService.jwtIssuer()
-//        }
-//        else return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Not valid credential or username");
-//
-//        result.put("accessToken",token);
-//        return new IDMResponse().Correct(HttpStatus.OK,result,"Login Successfully");
-
     }
-
 
     @PostMapping("/adminUpdate")
     public ResponseEntity<Object> adminUpdate(@Valid @RequestBody Map<String,String> payload) throws IOException {
@@ -111,7 +94,27 @@ public class AdminController {
             return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST, "missing parameters");
     }
 
+    @GetMapping("/admin/all")
+    public ResponseEntity<Object> getAllAdmins(@RequestParam Map<String,String> allParams,
+                                               @RequestHeader Map<String,String> header){
+        logger.info("Start to process Get All Admins ");
+        AdminService adminService = new AdminService();
+        UtilTools utilTools = new UtilTools();
+        jwtService = new JWTService();
+        if(jwtService.jwtValidator(header,allParams,SecurityConstants.AdminSECRET)){
+            if(utilTools.checkParameters(allParams,Constant.RequiredParams.adminGetAll)){
+                List<Admin> res = adminRepository.findAll();
+                return new IDMResponse().Correct(HttpStatus.OK,res,"Successfully found admins");
+            }
+            else {
+                return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"missing parameters.");
+            }
+        }
+        else{
+            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"invalid access token");
+        }
 
 
+    }
 
 }

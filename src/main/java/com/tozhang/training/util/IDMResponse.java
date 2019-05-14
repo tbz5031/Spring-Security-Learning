@@ -45,7 +45,7 @@ public class IDMResponse extends ServiceRuntimeException{
         return new ResponseEntity<Object>(response,response.getStatus());
     }
 
-    public ResponseEntity<Object> Correct(HttpStatus status, List<Guest> ls, String str){
+    public ResponseEntity<Object> Correct(HttpStatus status, List<Object> ls, String str){
 
         ApiResponse response =new ApiResponse.ApiResponseBuilder()
                 .withStatus(status).withMessage(str).withDetail(ls)

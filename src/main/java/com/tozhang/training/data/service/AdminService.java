@@ -64,7 +64,7 @@ public class AdminService extends Admin{
                 return admin;
             }
             else{
-                admin.setPassword(payload.get(Constant.Param.password).toString());
+                admin.setPassword(payload.get(Constant.Param.newPasscode).toString());
                 admin.setFirstName(payload.get(Constant.Param.firstName).toString());
                 admin.setLastName(payload.get(Constant.Param.lastName).toString());
                 admin.setPhoneNumber(payload.get(Constant.Param.phoneNumber).toString());
