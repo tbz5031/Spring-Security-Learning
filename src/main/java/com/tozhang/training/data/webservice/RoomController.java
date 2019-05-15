@@ -1,14 +1,15 @@
 package com.tozhang.training.data.webservice;
 
-import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.entity.Room;
 import com.tozhang.training.data.repository.RoomRepository;
-import com.tozhang.training.data.service.GuestService;
+import com.tozhang.training.data.security.JWTService;
+import com.tozhang.training.data.security.SecurityConstants;
 import com.tozhang.training.data.service.RoomService;
-import com.tozhang.training.data.service.SmsSender;
 
+import com.tozhang.training.util.Constant;
 import com.tozhang.training.util.IDMResponse;
 import com.tozhang.training.util.ServiceRuntimeException;
+import com.tozhang.training.util.UtilTools;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,20 +17,110 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.xml.ws.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @RestController
-@RequestMapping("api")
+@RequestMapping("/room")
 public class RoomController {
     private static final Logger logger = Logger.getLogger(RoomController.class);
 
     @Autowired
-    private RoomRepository roomRepository;
+    RoomRepository roomRepository;
+
+    @Autowired
+    RoomService roomService = new RoomService();
+
+    @Autowired
+    JWTService jwtService = new JWTService();
+
+    @PostMapping(value = "/create")
+    public Object createRoom(@Valid @RequestBody Map<String,String> payload,
+                             @RequestHeader Map<String,String> header){
+        logger.info("Received creating room request");
+        HashMap<String,String> request = new HashMap<>(payload);
+        UtilTools utilTools = new UtilTools();
+        if(utilTools.checkParameters(request, Constant.RequiredParams.postRoom)){
+            if(jwtService.jwtValidator(header,request, SecurityConstants.AdminSECRET)){
+                logger.info("Authentication passed");
+                if(roomRepository.findByNumber(request.get(Constant.Param.roomNum))==null){
+                    Room room = roomService.create(request);
+                    roomRepository.save(room);
+                    return new IDMResponse().Correct(HttpStatus.OK,room,"New Room is Successfully added ");
+                }else{
+                    return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"this room is already exists");
+                }
+
+            }else{
+                return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Invalid Token");
+            }
+
+        }else{
+            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Missing Parameters");
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity updateRoom(@PathVariable(value = "id") String roomNum,
+                                     @Valid @RequestBody Map<String,String> payload,
+                                     @RequestHeader Map<String,String> header) {
+        logger.info("Start to update room");
+        HashMap<String, String> request = new HashMap<>(payload);
+        UtilTools utilTools = new UtilTools();
+        if (utilTools.checkParameters(request, Constant.RequiredParams.updateRoom)) {
+            if (jwtService.jwtValidator(header, request, SecurityConstants.AdminSECRET)) {
+                logger.info("Authentication passed");
+                try {
+                    Room updateroom = roomRepository.findByNumber(roomNum);
+                    roomService.update(payload, updateroom);
+                    roomRepository.save(updateroom);
+                    return new IDMResponse().Correct(HttpStatus.OK, updateroom, "Room Successfully updated");
+                } catch (NullPointerException ne) {
+                    return new IDMResponse().Correct(HttpStatus.BAD_REQUEST, "could not find room :" + roomNum);
+                }
+            } else {
+                return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST, "Invalid Token");
+            }
+        } else {
+            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST, "Missing Parameters");
+        }
+    }
+
+
+    //delete a room
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteRoom(@PathVariable(value = "id") String roomNum,
+                                        @Valid @RequestParam Map<String,String> payload,
+                                        @RequestHeader Map<String,String> header) {
+        logger.info("Start to delete room");
+        HashMap<String, String> request = new HashMap<>(payload);
+        UtilTools utilTools = new UtilTools();
+        if (utilTools.checkParameters(request, Constant.RequiredParams.deleteRoom)) {
+            if (jwtService.jwtValidator(header, request, SecurityConstants.AdminSECRET)) {
+                logger.info("Authentication passed");
+                try {
+                    Room updateroom = roomRepository.findByNumber(roomNum);
+                    roomRepository.delete(updateroom);
+                    return new IDMResponse().Correct(HttpStatus.OK, updateroom, "Room Successfully deleted");
+                } catch (NullPointerException ne) {
+                    return new IDMResponse().Correct(HttpStatus.BAD_REQUEST, "could not find room :" + roomNum);
+                }
+            } else {
+                return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST, "Invalid Token");
+            }
+        } else {
+            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST, "Missing Parameters");
+        }
+    }
+
+
+
+
+
+
+
+
 
     @GetMapping(value = "/rooms")
     public ResponseEntity<Object> getAllRooms() {
@@ -37,17 +128,7 @@ public class RoomController {
         return new IDMResponse().Correct(HttpStatus.OK,ls_room,"Successful");
     }
 
-//    @GetMapping(value = "/rooms/{name}")
-//    public ResponseEntity<Object> getroomByName(@PathVariable(value = "name") String name){
-//        List<Room> ls_room = roomRepository.findByName(name);
-//        if (ls_room != null)
-//            return new Output().Correct(HttpStatus.OK,ls_room,"Successful");
-//        else
-//            return new Output().Wrong(HttpStatus.NOT_FOUND,"room not found");
-//    }
-
     @GetMapping(value = "/rooms",params = "name")
-    //@ResponseBody
     public ResponseEntity<Object> getroomByNameParam(@RequestParam(value = "name") String name){
         List<Room> ls_room = roomRepository.findByName(name);
         if (ls_room != null)
@@ -56,8 +137,7 @@ public class RoomController {
             return new IDMResponse().Wrong(HttpStatus.NOT_FOUND,"room not found");
     }
     @GetMapping(value = "/room",params = "number")
-    //@ResponseBody
-    public ResponseEntity<Object> getroomByNumberParam(@RequestParam(value = "number") Long id){
+    public ResponseEntity<Object> getroomByNumberParam(@RequestParam(value = "number") String id){
         Room ls_room = roomRepository.findByNumber(id);
         if (ls_room != null)
             return new IDMResponse().Correct(HttpStatus.OK,ls_room,"Successful");
@@ -67,7 +147,7 @@ public class RoomController {
 
     @GetMapping(value = "/room",params = "id")
     //@ResponseBody
-    public ResponseEntity<Object> getroomByIdParam(@RequestParam(value = "name") Long id){
+    public ResponseEntity<Object> getroomByIdParam(@RequestParam(value = "name") String id){
         Room ls_room = roomRepository.findByNumber(id);
         if (ls_room != null)
             return new IDMResponse().Correct(HttpStatus.OK,ls_room,"Successful");
@@ -75,43 +155,5 @@ public class RoomController {
             throw new ServiceRuntimeException("Room by id "+id +" is not found");
     }
 
-    @PostMapping(value = "/room")
-    public Object createRoom(@Valid @RequestBody Map<String,String> payload){
-        logger.info("Received POST request");
-        HashMap<String,String> request = new HashMap<>(payload);
-        Room newRoom = RoomService.create(request);
 
-        roomRepository.save(newRoom);
-        logger.info("guest successfully added");
-        return new IDMResponse().Correct(HttpStatus.OK,newRoom,"successfully added");
-    }
-    @PutMapping("/rooms/{id}")
-    public ResponseEntity updateRoom(@PathVariable(value = "id") Long roomId,
-                                     @Valid @RequestBody Room room) {
-
-        Room updateroom = roomRepository.findByNumber(roomId);
-
-        if(updateroom==null) {
-            logger.info("User not exist");
-            throw new ServiceRuntimeException("Room not found");
-        }
-        else{
-            updateroom.setName(room.getName());
-            updateroom.setBedInfo(room.getBedInfo());
-            updateroom.setNumber(room.getNumber());
-            return new IDMResponse().Correct(HttpStatus.OK,updateroom,"successfully");
-        }
-    }
-
-    //delete a guest
-    @DeleteMapping("/rooms/{id}")
-    public ResponseEntity<?> deleteRoom(@PathVariable(value = "id") Long noteId) {
-        Room room = roomRepository.findByNumber(noteId);
-
-        if (room == null) return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"fail");
-        else {
-            roomRepository.delete(room);
-            return new IDMResponse().Correct(HttpStatus.OK,"successful");
-        }
-    }
 }
