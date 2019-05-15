@@ -147,6 +147,9 @@ public class AdminController {
                 try{
                     admin = adminRepository.findByadminaccount(allParams.get(Constant.Param.accountRevoke));
                     if(admin.getStatus()==Constant.Param.revoked) throw new ServiceRuntimeException("User is revoked");
+                    if(adminRepository.findAll().size()==1) {
+                        return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"You can not revoke the last admin");
+                    }
                     admin.setStatus(Constant.Param.revoked);
                     adminRepository.save(admin);
                     return new IDMResponse().Correct(HttpStatus.OK,"Successfully revoked");
