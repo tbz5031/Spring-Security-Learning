@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -32,21 +33,21 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        HttpSecurity httpSecurity = http.csrf().disable();
+//        HttpSecurity httpSecurity = http.csrf().disable();
                 //todo Need to configure spring security in the future.
-//        HttpSecurity httpSecurity = http.csrf().disable().authorizeRequests()
-//                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-//                .antMatchers(HttpMethod.POST, SIGN_IN_URL).permitAll()
-//                .anyRequest().authenticated()
-//                .and();
+        HttpSecurity httpSecurity = http.csrf().disable().authorizeRequests()
+                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                .antMatchers(HttpMethod.POST, SIGN_IN_URL).permitAll()
+                .anyRequest().authenticated()
+                .and();
 ////                .addFilterBefore(new TransactionFilter(), BasicAuthenticationFilter.class)
 ////                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
 ////                .addFilter(new JWTAuthorizationFilter(authenticationManager()));
 
     }
 
-//    @Override
-//    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
-//    }
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+    }
 }
