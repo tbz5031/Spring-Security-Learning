@@ -73,7 +73,15 @@ public class JWTService {
     }
     public boolean decodeLoginTs(Map<String,String> reqheader,Map<String,String> param,String secret){
         try {
-            Object loginTsDb = adminRepository.findByEmailAddress(param.get("emailAddress")).getLoginTs();
+            Object loginTsDb = null;
+            if(secret.equals(SecurityConstants.GuestSECRET)){
+                loginTsDb = guestRepository.findByEmailAddress(param.get("emailAddress")).getLoginTs();
+            }
+            else if(secret.equals(SecurityConstants.AdminSECRET)){
+                loginTsDb = adminRepository.findByEmailAddress(param.get("emailAddress")).getLoginTs();
+            }else{
+                loginTsDb = null;
+            }
             String token = reqheader.get("authorization").split(" ")[1];
             Object LoginTs = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getHeader().get("LoginTs");
             if (loginTsDb.equals(LoginTs)) return true;

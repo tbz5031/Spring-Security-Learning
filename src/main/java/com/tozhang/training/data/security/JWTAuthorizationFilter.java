@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import static com.tozhang.training.data.security.SecurityConstants.*;
 
 @Component
-@Order(2)
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Autowired
@@ -53,7 +52,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        logger.info(req.getRequestURL().toString()+ " Before JWTauthorization filter");
         chain.doFilter(req, res);
+        logger.info(req.getRequestURL().toString()+ " after JWTauthorization filter");
     }
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) throws ServiceRuntimeException {
         String token = request.getHeader(HEADER_STRING);
@@ -69,9 +70,13 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             }catch(ArrayIndexOutOfBoundsException ae){
                 logger.error("Invalid access Token");
                 throw new ServiceRuntimeException("Invalid Access token");
-            }catch (MalformedJwtException me){
+            }catch (MalformedJwtException me) {
                 logger.error("Invalid access Token");
                 throw new ServiceRuntimeException("Invalid Access token");
+            }catch (io.jsonwebtoken.ExpiredJwtException ee){
+                logger.error("Token expired");
+                return null;
+                //throw new ServiceRuntimeException("Invalid Access token");
             }
             if (user != null) {
                 return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());

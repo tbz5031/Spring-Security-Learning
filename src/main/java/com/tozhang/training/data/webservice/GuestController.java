@@ -67,11 +67,12 @@ public class GuestController {
         String refresh_token = null;
         Guest guest = guestRepository.findByEmailAddress(request.get("emailAddress"));
         // transfer guest object to hashmap
-        Map<String, Object> result = GuestUtil.mappingHelper(guest);
+        Map<String, Object> result = null;
         if(guest!=null && guest.getPassword().equals(payload.get("password"))){
              guest = GuestService.updateLoginTimeAndStatus(guest);
              guestRepository.save(guest);
-             result.put("loginTs",guest.getLoginTs());
+             result = GuestUtil.mappingHelper(guest);
+             result.put("LoginTs",guest.getLoginTs());
              token = jwtService.jwtIssuer(result,SecurityConstants.GuestSECRET);
              result.put("accessToken",token);
              //todo Need to implement refreshtoken.
@@ -90,6 +91,7 @@ public class GuestController {
         logger.info("Get Guest Process");
         jwtService = new JWTService();
         Guest guest = null;
+        logger.info("something wrong");
         if(jwtService.jwtValidator(header,allParams,SecurityConstants.GuestSECRET)){
             guest = guestRepository.findByEmailAddress(allParams.get("emailAddress"));
             if (guest==null)

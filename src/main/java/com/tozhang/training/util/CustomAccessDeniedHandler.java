@@ -1,9 +1,13 @@
 package com.tozhang.training.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tozhang.training.data.filters.TransactionFilter;
+import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
@@ -15,27 +19,18 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CustomAccessDeniedHandler implements AuthenticationFailureHandler {
+public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
+    private static final Logger logger = Logger.getLogger(TransactionFilter.class);
     @Override
-    public void onAuthenticationFailure(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException exception)
-            throws IOException, ServletException {
-
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        Map<String, Object> data = new HashMap<>();
-        data.put(
-                "timestamp",
-                Calendar.getInstance().getTime());
-        data.put(
-                "exception",
-                exception.getMessage());
-
-        response.getOutputStream()
-                .println(objectMapper.writeValueAsString(data));
+    public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
+        System.out.println("Came here");
+        Authentication auth
+                = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            logger.warn("User: " + auth.getName()
+                    + " attempted to access the protected URL: "
+                    + httpServletRequest.getRequestURI());
+        }
     }
 }
