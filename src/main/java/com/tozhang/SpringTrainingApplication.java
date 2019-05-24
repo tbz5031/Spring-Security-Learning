@@ -17,8 +17,23 @@ public class SpringTrainingApplication {
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
 	public static void main(String[] args) {
 			SpringApplication.run(SpringTrainingApplication.class, args);
 			BasicConfigurator.configure();
 	}
 }
+
+//@SpringBootApplication
+//public class SpringTrainingApplication extends SpringBootServletInitializer {
+//
+//	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+//		return application.sources(Application.class);
+//	}
+//
+//	public static void main(String[] args) throws Exception {
+//		SpringApplication.run(Application.class, args);
+//	}
+//
+//}
+
