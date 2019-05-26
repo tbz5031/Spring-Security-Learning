@@ -3,7 +3,8 @@ package com.tozhang.training.data.security;
 import com.tozhang.training.data.repository.AdminRepository;
 import com.tozhang.training.data.repository.GuestRepository;
 import io.jsonwebtoken.*;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import static com.tozhang.training.data.security.SecurityConstants.EXPIRATION_TI
 
 @Service
 public class JWTService {
-    private static final Logger logger = Logger.getLogger(JWTService.class);
+    private static final Logger logger = LogManager.getLogger(JWTService.class);
     @Autowired
     private static GuestRepository guestRepository;
 

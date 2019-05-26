@@ -1,7 +1,6 @@
 package com.tozhang.training.data.filters;
-import com.tozhang.training.util.IDMResponse;
-import org.apache.log4j.Logger;
-import org.springframework.core.annotation.Order;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -12,7 +11,7 @@ import java.io.IOException;
 @Component
 public class TransactionFilter implements Filter {
 
-    private static final Logger logger = Logger.getLogger(TransactionFilter.class);
+    private static final Logger logger = LogManager.getLogger(TransactionFilter.class);
     public static TransactionFilter transactionFilter;
 
     @Override

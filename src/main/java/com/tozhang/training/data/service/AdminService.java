@@ -6,7 +6,8 @@ import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.security.JWTService;
 import com.tozhang.training.data.webservice.AdminController;
 import com.tozhang.training.util.Constant;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 @Service
 public class AdminService extends Admin{
 
-    private static final Logger logger = Logger.getLogger(AdminService.class);
+    private static final Logger logger = LogManager.getLogger(AdminService.class);
 
     @Autowired
     private static AdminRepository adminRepository;

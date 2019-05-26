@@ -10,7 +10,8 @@ import com.tozhang.training.util.Constant;
 import com.tozhang.training.util.IDMResponse;
 import com.tozhang.training.util.ServiceRuntimeException;
 import com.tozhang.training.util.UtilTools;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/room")
 public class RoomController {
-    private static final Logger logger = Logger.getLogger(RoomController.class);
+    private static final Logger logger = LogManager.getLogger(RoomController.class);
 
     @Autowired
     RoomRepository roomRepository;

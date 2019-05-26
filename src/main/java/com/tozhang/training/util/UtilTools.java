@@ -2,12 +2,13 @@ package com.tozhang.training.util;
 
 
 import com.tozhang.training.data.webservice.AdminController;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
 public class UtilTools {
-    private static final Logger logger = Logger.getLogger(UtilTools.class);
+    private static final Logger logger = LogManager.getLogger(UtilTools.class);
     public boolean checkParameters(Map payload, String[] requiredList){
         int num = 0;
         for (String param : requiredList){

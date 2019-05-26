@@ -7,7 +7,8 @@ import com.tozhang.training.data.security.SecurityConstants;
 import com.tozhang.training.data.service.AdminService;
 import com.tozhang.training.data.service.ConfigProperties;
 import com.tozhang.training.util.*;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ import java.util.Map;
 @RequestMapping("/system")
 public class AdminController {
 
-    private static final Logger logger = Logger.getLogger(AdminController.class);
+    private static final Logger logger = LogManager.getLogger(AdminController.class);
 
     @Autowired
     JWTService jwtService;

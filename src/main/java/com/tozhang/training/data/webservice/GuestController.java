@@ -8,6 +8,8 @@ import com.tozhang.training.data.service.GuestService;
 import com.tozhang.training.util.GuestUtil;
 import com.tozhang.training.util.IDMResponse;
 import com.tozhang.training.util.ServiceRuntimeException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +18,11 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
 
-import org.apache.log4j.Logger;
 
 @RestController
 @RequestMapping("/guest")
 public class GuestController {
-    private static final Logger logger = Logger.getLogger(GuestController.class);
+    private static final Logger logger = LogManager.getLogger(GuestController.class);
 
     @Autowired
     JWTService jwtService;

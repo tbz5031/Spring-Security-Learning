@@ -2,7 +2,8 @@ package com.tozhang.training.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tozhang.training.data.filters.TransactionFilter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 public class CustomAccessDeniedHandler implements AccessDeniedHandler{
 
-    private static final Logger logger = Logger.getLogger(TransactionFilter.class);
+    private static final Logger logger = LogManager.getLogger(TransactionFilter.class);
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
         System.out.println("Came here");
