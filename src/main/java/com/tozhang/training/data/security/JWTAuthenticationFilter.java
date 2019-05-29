@@ -64,13 +64,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse res,
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
-        String token = Jwts.builder()
-                .setSubject(((User)auth.getPrincipal()).getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, GuestSECRET)
-                .compact();
-        log.info("token: " + token);
-        res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+//        String token = Jwts.builder()
+//                .setSubject(((User)auth.getPrincipal()).getUsername())
+//                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+//                .signWith(SignatureAlgorithm.HS512, GuestSECRET)
+//                .compact();
+//        log.info("token: " + token);
+//        res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
 
     }
 }

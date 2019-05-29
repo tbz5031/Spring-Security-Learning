@@ -22,7 +22,7 @@ public class HomeController {
             return "redirect:/logout";
         }
         model.put("userId", principal);
-        return "reservations";
+        return "index";
     }
 
 }

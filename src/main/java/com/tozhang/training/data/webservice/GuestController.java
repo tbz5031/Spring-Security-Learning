@@ -18,7 +18,6 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
 
-
 @RestController
 @RequestMapping("/guest")
 public class GuestController {
@@ -33,9 +32,17 @@ public class GuestController {
 
     //Get all guest
     @GetMapping("/guests")
-    public ResponseEntity<Object> getAllGuests() {
-        List<Guest> ls_guests = guestRepository.findAll();
-        return new IDMResponse().Correct(HttpStatus.OK, ls_guests, "Successful");
+    public ResponseEntity<Object> getAllGuests(@RequestParam Map<String,String> allParams,
+                                               @RequestHeader Map<String,String> header) {
+        List<Guest> ls_guests = null;
+        if(jwtService.jwtValidator(header,allParams,SecurityConstants.GuestSECRET)){
+            ls_guests = guestRepository.findAll();
+            if (ls_guests==null)
+                return new IDMResponse().Correct(HttpStatus.OK,null,"Successful");
+            else
+                return new IDMResponse().Correct(HttpStatus.OK,ls_guests,"successfully founded");
+        }else
+            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Invalid access token");
     }
 
     //create a new guest test

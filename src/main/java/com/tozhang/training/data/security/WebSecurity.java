@@ -141,12 +141,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                         .addFilterAfter(new JWTAuthorizationFilter(authenticationManager()),JWTAuthenticationFilter.class)
                         //.addFilterBefore(transactionFilter,JWTAuthenticationFilter.class)//this is used for development.
                 .exceptionHandling().accessDeniedPage("/error").and();
-        http
-                .authorizeRequests()
-                .antMatchers("/callback", "/login").permitAll()
-                .antMatchers("/**").authenticated()
-                .and()
-                .logout().logoutSuccessHandler(logoutSuccessHandler()).permitAll();
+//        http
+//                .authorizeRequests()
+//                .antMatchers("/callback", "/login").permitAll()
+//                .antMatchers("/**").authenticated()
+//                .and()
+//                .logout().logoutSuccessHandler(logoutSuccessHandler()).permitAll();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
 
 ////                .addFilterBefore(new TransactionFilter(), BasicAuthenticationFilter.class)

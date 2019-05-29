@@ -60,5 +60,4 @@ public class CallbackController {
             res.sendRedirect(redirectOnFail);
         }
     }
-
 }
