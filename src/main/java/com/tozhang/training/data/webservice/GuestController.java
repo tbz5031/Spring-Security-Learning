@@ -1,5 +1,6 @@
 package com.tozhang.training.data.webservice;
 
+import com.auth0.AuthenticationController;
 import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.security.JWTService;
@@ -14,6 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
@@ -23,6 +28,11 @@ import java.util.*;
 public class GuestController {
     private static final Logger logger = LogManager.getLogger(GuestController.class);
 
+    private GuestController guestController;
+    @Autowired
+    public void setGuestController(GuestController guestController ) {
+        this.guestController = guestController;
+    }
     @Autowired
     JWTService jwtService;
 
@@ -65,6 +75,20 @@ public class GuestController {
         }
         return new IDMResponse().Correct(HttpStatus.OK, newGuest,"successfully added");
     }
+    public Guest callBackSignUp(ResponseEntity response) throws IOException{
+        logger.info("call back signUp process");
+        ResponseEntity res = response;
+        HashMap<String, Object> map = (HashMap<String, Object>) GuestUtil.mappingHelper(res.getBody());
+        Guest newguest = new Guest();
+        newguest.setAccount(map.get("nickname").toString());
+        newguest.setEmailAddress(map.get("email").toString());
+        newguest.setStatus("inactive");
+        newguest.setPassword("Here it is");
+        newguest.setCreatedTs(System.currentTimeMillis());
+        guestRepository.save(newguest);
+        logger.info("Successfully added new user");
+        return newguest;
+    }
 
     @PostMapping("/signIn")
     public Object guestLogin(@Valid @RequestBody Map<String,String> payload) throws IOException {
@@ -90,6 +114,27 @@ public class GuestController {
 
 
         return new IDMResponse().Correct(HttpStatus.OK,result,"Login Successfully");
+    }
+
+
+    public ResponseEntity callBackLogin(ResponseEntity response) throws IOException {
+        logger.info("SignIn Process");
+        ResponseEntity res = response;
+        HashMap<String, Object> map = (HashMap<String, Object>) GuestUtil.mappingHelper(res.getBody());
+        Guest guest = guestRepository.findByEmailAddress(map.get("email").toString());
+        Map<String, Object> result = null;
+        String token = null;
+        if(guest==null) guest = guestController.callBackSignUp(response);
+        guest = GuestService.updateLoginTimeAndStatus(guest);
+        guestRepository.save(guest);
+        result = GuestUtil.mappingHelper(guest);
+        result.put("LoginTs",guest.getLoginTs());
+        token = jwtService.jwtIssuer(result,SecurityConstants.GuestSECRET);
+        result.put("accessToken",token);
+        //todo Need to implement refreshtoken.
+        //refresh_token = JWTService.jwtIssuer()
+
+        return new IDMResponse().Correct(HttpStatus.OK,result,"Successfully logged in");
     }
 
     //get a single guest find by id

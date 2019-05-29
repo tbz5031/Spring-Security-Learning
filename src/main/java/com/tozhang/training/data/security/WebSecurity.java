@@ -132,7 +132,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         HttpSecurity httpSecurity =
                 http.csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-                .antMatchers(HttpMethod.POST, SIGN_IN_URL).permitAll()
+                .antMatchers(SIGN_IN_URL).permitAll()
                 .antMatchers( "/invalidToken").permitAll()
                         .antMatchers("/callback", "/login","/portal/home").permitAll()
                 .anyRequest().authenticated()

@@ -13,7 +13,7 @@ public class GuestUtil {
         else return false;
     }
 
-    public static Map<String,Object> mappingHelper(Guest guest){
+    public static Map<String,Object> mappingHelper(Object guest){
 
         ObjectMapper m = new ObjectMapper();
         Map<String,Object> res = m.convertValue(guest,Map.class);

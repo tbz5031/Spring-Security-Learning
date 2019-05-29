@@ -42,7 +42,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                                     FilterChain chain) throws IOException, ServletException {
         String header = req.getHeader(HEADER_STRING);
         if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+            logger.info(req.getRequestURL().toString()+ " Before JWTauthorization filter");
             chain.doFilter(req, res);
+            logger.info(req.getRequestURL().toString()+ " after JWTauthorization filter");
             return;
         }
         UsernamePasswordAuthenticationToken authentication = null;
