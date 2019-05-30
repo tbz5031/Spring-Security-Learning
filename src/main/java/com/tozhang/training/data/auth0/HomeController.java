@@ -1,4 +1,4 @@
-package com.tozhang.training.data.mvc;
+package com.tozhang.training.data.auth0;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,14 +1,12 @@
-package com.tozhang.training.data.mvc;
+package com.tozhang.training.data.auth0;
 
 import com.auth0.AuthenticationController;
 import com.auth0.IdentityVerificationException;
 import com.auth0.Tokens;
 
 import com.auth0.jwt.JWT;
-import com.tozhang.training.data.repository.AdminRepository;
 import com.tozhang.training.data.security.TokenAuthentication;
 import com.tozhang.training.data.security.WebSecurity;
-import com.tozhang.training.data.service.AdminService;
 import com.tozhang.training.data.webservice.GuestController;
 import com.tozhang.training.util.IDMResponse;
 import org.apache.logging.log4j.LogManager;

@@ -1,4 +1,4 @@
-package com.tozhang.training.data.mvc;
+package com.tozhang.training.data.auth0;
 
 import com.auth0.AuthenticationController;
 import com.tozhang.training.data.security.WebSecurity;
