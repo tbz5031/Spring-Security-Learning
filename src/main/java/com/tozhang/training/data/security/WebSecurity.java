@@ -1,11 +1,13 @@
 package com.tozhang.training.data.security;
 
 import com.auth0.AuthenticationController;
+import com.github.ulisesbocchio.spring.boot.security.saml.configurer.ServiceProviderBuilder;
 import com.tozhang.training.data.filters.TransactionFilter;
 import com.tozhang.training.util.CustomAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -133,13 +135,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .antMatchers(SIGN_IN_URL).permitAll()
                 .antMatchers( "/invalidToken").permitAll()
+                        .antMatchers("/index").permitAll()
                         .antMatchers("/callback", "/login","/portal/home").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))
                         .addFilterAfter(new JWTAuthorizationFilter(authenticationManager()),JWTAuthenticationFilter.class)
                         //.addFilterBefore(transactionFilter,JWTAuthenticationFilter.class)//this is used for development.
-                .exceptionHandling().accessDeniedPage("/error").and();
+                .exceptionHandling().accessDeniedPage("/index").and();
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
     }

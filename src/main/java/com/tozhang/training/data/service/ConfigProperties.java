@@ -43,4 +43,5 @@ public class ConfigProperties {
         admin.setFirst(true);
         adminRepository.save(admin);
     }
+
 }
