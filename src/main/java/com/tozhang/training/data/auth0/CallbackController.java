@@ -45,7 +45,7 @@ public class CallbackController {
     private WebSecurity webSecurity;
 
     public CallbackController() {
-        this.redirectOnFail = "/login";
+        this.redirectOnFail = "/index";
         this.redirectOnSuccess = "/guest/signIn";
     }
 

@@ -21,7 +21,7 @@ public class myErrorController implements ErrorController {
     protected String error(final RedirectAttributes redirectAttributes) throws IOException {
         logger.error("Handling error");
         redirectAttributes.addFlashAttribute("error", true);
-        return "redirect:/login";
+        return "redirect:/index";
     }
 
     @Override

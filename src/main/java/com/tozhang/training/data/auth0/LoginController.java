@@ -18,7 +18,7 @@ public class LoginController {
     @Autowired
     private AuthenticationController controller;
     @Autowired
-    private WebSecurity webSecurity;
+    private WebSecurity.MyServiceProviderConfig.AppSecurity appSecurity;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -30,7 +30,7 @@ public class LoginController {
         }
         redirectUri += "/callback";
         String authorizeUrl = controller.buildAuthorizeUrl(req, redirectUri)
-                .withAudience(String.format("https://%s/userinfo", webSecurity.getDomain()))
+                .withAudience(String.format("https://%s/userinfo", appSecurity.getDomain()))
                 .withParameter("scope","openid profile email offline_access")
                 .build();
         return "redirect:" + authorizeUrl;

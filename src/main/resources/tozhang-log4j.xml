@@ -11,16 +11,12 @@
         </File>
     </Appenders>
     <Loggers>
-        <Logger name="com.mkyong" level="debug" additivity="false">
-            <AppenderRef ref="LogToFile"/>
+        <Logger name="org.springframework.boot" level="debug" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
-        <Logger name="org.springframework.boot" level="error" additivity="false">
-            <AppenderRef ref="LogToConsole"/>
-        </Logger>
-        <Root level="error">
-            <AppenderRef ref="LogToFile"/>
-            <AppenderRef ref="LogToConsole"/>
-        </Root>
+        <root>
+            <priority value ="debug" />
+            <appender-ref ref="console" />
+        </root>
     </Loggers>
 </Configuration>

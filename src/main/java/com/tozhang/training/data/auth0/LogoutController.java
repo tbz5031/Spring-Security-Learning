@@ -17,7 +17,7 @@ import java.io.IOException;
 public class LogoutController implements LogoutSuccessHandler {
 
     @Autowired
-    private WebSecurity webSecurity;
+    private WebSecurity.MyServiceProviderConfig.AppSecurity appSecurity;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -32,8 +32,8 @@ public class LogoutController implements LogoutSuccessHandler {
         returnTo += "/login";
         String logoutUrl = String.format(
                 "https://%s/v2/logout?client_id=%s&returnTo=%s",
-                webSecurity.getDomain(),
-                webSecurity.getClientId(),
+                appSecurity.getDomain(),
+                appSecurity.getClientId(),
                 returnTo);
         try {
             res.sendRedirect(logoutUrl);
