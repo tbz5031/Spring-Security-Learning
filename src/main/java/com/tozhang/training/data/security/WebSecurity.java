@@ -119,22 +119,6 @@ public class WebSecurity {
                         .build();
             }
 
-
-
-            /* todo need to combine configure together with previous one */
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.csrf().disable();
-//
-//        http
-//                .authorizeRequests()
-//                .antMatchers("/callback", "/login").permitAll()
-//                .antMatchers("/**").authenticated()
-//                .and()
-//                .logout().logoutSuccessHandler(logoutSuccessHandler()).permitAll();
-//        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
-//    }
-
             public String getDomain() {
                 return domain;
             }
@@ -165,28 +149,6 @@ public class WebSecurity {
 
             @Override
             protected void configure(HttpSecurity http) throws Exception {
-
-                //todo impletment filter chain on 3 filters.
-//        HttpSecurity httpSecurity =
-//                http.csrf().disable().authorizeRequests()
-//                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-//                .antMatchers(HttpMethod.POST, SIGN_IN_URL).permitAll()
-//                .anyRequest().authenticated()
-//                .and()
-//                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-//                        .addFilterAfter(new JWTAuthorizationFilter(authenticationManager()),JWTAuthenticationFilter.class)
-//                        .addFilterBefore(transactionFilter,JWTAuthenticationFilter.class)
-//                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
-//                .and();
-
-//                http
-//                        .antMatcher("/**")
-//                        .authorizeRequests()
-//                        .antMatchers("/**").authenticated()
-//                        .and()
-//                        .formLogin().loginPage("/index")
-//                ;
-
                 HttpSecurity httpSecurity =
                         http.csrf().disable().antMatcher("/saml/login").antMatcher("/saml/SSO").authorizeRequests()
                                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
@@ -196,9 +158,11 @@ public class WebSecurity {
                                 .antMatchers("/callback", "/login", "/portal/home","/saml/SSO").permitAll()
                                 .anyRequest().authenticated()
                                 .and()
-                                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                                .addFilterAfter(new JWTAuthorizationFilter(authenticationManager()), JWTAuthenticationFilter.class)
-                                //.addFilterBefore(transactionFilter,JWTAuthenticationFilter.class)//this is used for development.
+                                // todo We’ll start by implementing the org.springframework.web.filter.GenericFilterBean.
+                                //  to customise filter, need to remove component.
+//                                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+//                                .addFilterAfter(new JWTAuthorizationFilter(authenticationManager()), JWTAuthenticationFilter.class)
+//                                .addFilterAfter(transactionFilter,JWTAuthenticationFilter.class)//this is used for development.
                                 .exceptionHandling().accessDeniedPage("/error").and();
 
                 http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);

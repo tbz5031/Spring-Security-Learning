@@ -17,10 +17,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Guest applicationUser = applicationUserRepository.findByEmailAddress(username);
-        if (applicationUser == null) {
-            throw new UsernameNotFoundException(username);
-        }
-        return new User(applicationUser.getEmailAddress(), applicationUser.getPassword(), emptyList());
+//        Guest applicationUser = applicationUserRepository.findByEmailAddress(username);
+//        if (applicationUser == null) {
+//            throw new UsernameNotFoundException(username);
+//        }
+//        return new User(applicationUser.getEmailAddress(), applicationUser.getPassword(), emptyList());
+        return new User(null,null,null);
     }
 }
