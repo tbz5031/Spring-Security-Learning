@@ -1,13 +1,8 @@
 package com.tozhang.training.data.entity;
-
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
-import java.sql.Timestamp;
-
-
 @Entity
 @Table(name="GUEST")
 @EntityListeners(AuditingEntityListener.class)
