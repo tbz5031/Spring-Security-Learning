@@ -18,7 +18,7 @@ public class LoginController {
     @Autowired
     private AuthenticationController controller;
     @Autowired
-    private WebSecurity.MyServiceProviderConfig.AppSecurity appSecurity;
+    private WebSecurity.AppSecurity appSecurity;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
