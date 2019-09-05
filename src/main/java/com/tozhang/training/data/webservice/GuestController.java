@@ -79,12 +79,13 @@ public class GuestController {
         logger.info("call back signUp process");
         ResponseEntity res = response;
         HashMap<String, Object> map = (HashMap<String, Object>) GuestUtil.mappingHelper(res.getBody());
-        Guest newguest = new Guest();
-        newguest.setAccount(map.get("nickname").toString());
-        newguest.setEmailAddress(map.get("email").toString());
-        newguest.setStatus("inactive");
-        newguest.setPassword("Here it is");
-        newguest.setCreatedTs(System.currentTimeMillis());
+        Guest newguest = new Guest.Builder(map.get("nickname").toString(),map.get("email").toString()).status("inactive")
+                .password("Here it is").createdTs(System.currentTimeMillis()).build();
+//        newguest.setAccount(map.get("nickname").toString());
+//        newguest.setEmailAddress(map.get("email").toString());
+//        newguest.setStatus("inactive");
+//        newguest.setPassword("Here it is");
+//        newguest.setCreatedTs(System.currentTimeMillis());
         guestRepository.save(newguest);
         logger.info("Successfully added new user");
         return newguest;

@@ -42,6 +42,8 @@ public class Guest{
     @Column(name="deviceId")
     private String deviceId;
 
+    // JavaBeans Pattern - allows inconsistency, mandates mutability
+
     public String getAccount() {
         return account;
     }
@@ -170,6 +172,70 @@ public class Guest{
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
+
+
+    // Builder pattern
+    public static class Builder {
+        private final String account;
+        private final String emailAddress;
+
+        // Optional parameters - initialized to default values
+        private String status="inactive";
+        private String firstName;
+        private String lastName;
+        private String refreshToken;
+        private String address;
+        private String country;
+        private String state;
+        private String phoneNumber;
+        private String password;
+        private Long loginTs;
+        private Long createdTs;
+        private Long logoutTs;
+        private String deviceId;
+
+        public Builder(String emailAddress, String account) {
+            this.emailAddress = emailAddress;
+            this.account= account;
+        }
+
+        public Builder firstName(String val) { firstName = val; return this; }
+        public Builder status(String val) { firstName = val; return this; }
+        public Builder lastName(String val) { lastName = val; return this; }
+        public Builder refreshToken(String val) { refreshToken = val; return this; }
+        public Builder address(String val) { address = val; return this; }
+        public Builder country(String val) { country = val; return this; }
+        public Builder state(String val) { state = val; return this; }
+        public Builder phoneNumber(String val) { phoneNumber = val; return this; }
+        public Builder password(String val) { password = val; return this; }
+        public Builder loginTs(Long val) { loginTs = val; return this; }
+        public Builder createdTs(Long val) { createdTs = val; return this; }
+        public Builder logoutTs(Long val) { logoutTs = val; return this; }
+        public Builder deviceId(String val) { deviceId = val; return this; }
+
+        public Guest build() {
+            return new Guest(this);
+        }
+    }
+
+    private Guest(Builder builder) {
+        firstName  = builder.firstName;
+        lastName  = builder.lastName;
+        refreshToken  = builder.refreshToken;
+        address  = builder.address;
+        country = builder.country;
+        state = builder.state;
+        phoneNumber = builder.phoneNumber;
+        password = builder.password;
+        loginTs = builder.loginTs;
+        createdTs = builder.createdTs;
+        logoutTs = builder.logoutTs;
+        deviceId = builder.deviceId;
+        status = builder.status;
+    }
+
+
+
 
 
 }
