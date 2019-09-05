@@ -38,12 +38,12 @@ import static com.tozhang.training.data.security.SecurityConstants.*;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurity {
 
-    @Configuration
-    @EnableSAMLSSO
-    @Order(2)
-    public static class MyServiceProviderConfig extends ServiceProviderConfigurerAdapter {
-
-
+//    @Configuration
+//    @EnableSAMLSSO
+//    @Order(2)
+//    public static class MyServiceProviderConfig extends ServiceProviderConfigurerAdapter {
+//
+//
 //        @Override
 //        public void configure(HttpSecurity http) throws Exception {
 //            http.authorizeRequests()
@@ -54,29 +54,30 @@ public class WebSecurity {
 //        }
 
 
-        @Override
-        public void configure(ServiceProviderBuilder serviceProvider) throws Exception {
-            WebSSOProfileOptions profileOptions = new WebSSOProfileOptions();
-            profileOptions.setBinding(SAMLConstants.SAML2_POST_BINDING_URI);
-            profileOptions.setBinding(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+//        @Override
+//        public void configure(ServiceProviderBuilder serviceProvider) throws Exception {
+//            WebSSOProfileOptions profileOptions = new WebSSOProfileOptions();
+//            profileOptions.setBinding(SAMLConstants.SAML2_POST_BINDING_URI);
+//            profileOptions.setBinding(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+//
+//            serviceProvider
+//                    .authenticationProvider()
+//                    .userDetailsService(new Auth0SAMLUserDetailsService())
+//                    .and()
+//                    .metadataGenerator()
+//                    .entityId("urn:tozhang66666")
+//                    .requestSigned(false)
+//                    .and()
+//                    .sso()
+//                    .profileOptions(profileOptions)
+//                    .defaultSuccessURL("/portal/home")
+//                    .and()
+//                    .metadataManager()
+//                    .metadataLocations("classpath:auth0-metadata.xml")
+//                    .refreshCheckInterval(0).and()
+//                    ;
+//        }
 
-            serviceProvider
-                    .authenticationProvider()
-                    .userDetailsService(new Auth0SAMLUserDetailsService())
-                    .and()
-                    .metadataGenerator()
-                    .entityId("urn:tozhang66666")
-                    .requestSigned(false)
-                    .and()
-                    .sso()
-                    .profileOptions(profileOptions)
-                    .defaultSuccessURL("/portal/home")
-                    .and()
-                    .metadataManager()
-                    .metadataLocations("classpath:auth0-metadata.xml")
-                    .refreshCheckInterval(0).and()
-                    .http().authorizeRequests().antMatchers("/**").permitAll();
-        }
 
         @Order(1)
         public class AppSecurity extends WebSecurityConfigurerAdapter {
@@ -154,8 +155,9 @@ public class WebSecurity {
                                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                                 .antMatchers(SIGN_IN_URL).permitAll()
                                 .antMatchers("/invalidToken").permitAll()
-                                .antMatchers("/index","reservation").permitAll()
-                                .antMatchers("/callback", "/login", "/portal/home","/saml/SSO").permitAll()
+                                .antMatchers("/index").permitAll()
+                                .antMatchers("/reservations").permitAll()
+                                .antMatchers("/callback", "/login", "/portal/home", "/saml/SSO").permitAll()
                                 .anyRequest().authenticated()
                                 .and()
                                 // todo We’ll start by implementing the org.springframework.web.filter.GenericFilterBean.
@@ -186,4 +188,3 @@ public class WebSecurity {
         }
 
     }
-}

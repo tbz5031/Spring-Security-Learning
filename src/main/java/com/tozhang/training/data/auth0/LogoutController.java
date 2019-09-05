@@ -17,7 +17,7 @@ import java.io.IOException;
 public class LogoutController implements LogoutSuccessHandler {
 
     @Autowired
-    private WebSecurity.MyServiceProviderConfig.AppSecurity appSecurity;
+    private WebSecurity.AppSecurity appSecurity;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
