@@ -79,8 +79,9 @@ public class GuestController {
         logger.info("call back signUp process");
         ResponseEntity res = response;
         HashMap<String, Object> map = (HashMap<String, Object>) GuestUtil.mappingHelper(res.getBody());
-        Guest newguest = new Guest.Builder(map.get("nickname").toString(),map.get("email").toString()).status("inactive")
-                .password("Here it is").createdTs(System.currentTimeMillis()).build();
+        String account = map.get("email").toString().substring(0,map.get("email").toString().indexOf("@"));
+        Guest newguest = new Guest.Builder(map.get("email").toString(),account).status("inactive")
+                .password("default").createdTs(System.currentTimeMillis()).build();
 //        newguest.setAccount(map.get("nickname").toString());
 //        newguest.setEmailAddress(map.get("email").toString());
 //        newguest.setStatus("inactive");

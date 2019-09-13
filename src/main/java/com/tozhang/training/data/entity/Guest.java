@@ -200,7 +200,7 @@ public class Guest{
         }
 
         public Builder firstName(String val) { firstName = val; return this; }
-        public Builder status(String val) { firstName = val; return this; }
+        public Builder status(String val) { status = val; return this; }
         public Builder lastName(String val) { lastName = val; return this; }
         public Builder refreshToken(String val) { refreshToken = val; return this; }
         public Builder address(String val) { address = val; return this; }
@@ -225,6 +225,7 @@ public class Guest{
         address  = builder.address;
         country = builder.country;
         state = builder.state;
+        emailAddress = builder.emailAddress;
         phoneNumber = builder.phoneNumber;
         password = builder.password;
         loginTs = builder.loginTs;
@@ -232,6 +233,7 @@ public class Guest{
         logoutTs = builder.logoutTs;
         deviceId = builder.deviceId;
         status = builder.status;
+        account = builder.account;
     }
 
 
