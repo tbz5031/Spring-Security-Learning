@@ -17,6 +17,7 @@ import org.springframework.security.config.BeanIds;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 
 import javax.servlet.FilterChain;
@@ -36,27 +37,25 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         super(authManager);
     }
 
+    @Autowired
+    public JWTService jwtService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
-        String header = req.getHeader(HEADER_STRING);
-        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
-            logger.info(req.getRequestURL().toString()+ " Before JWTauthorization filter");
+        logger.info(req.getRequestURL().toString()+ " Before JWTauthorization filter");
+        UsernamePasswordAuthenticationToken authentication = null;
+        try{
+            authentication = getAuthentication(req);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(req, res);
             logger.info(req.getRequestURL().toString()+ " after JWTauthorization filter");
-            return;
+        }catch (Exception e){
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED,
+                    e.getLocalizedMessage());
         }
-        UsernamePasswordAuthenticationToken authentication = null;
-        try {
-            authentication = getAuthentication(req);
-        } catch (NullPointerException e) {
-            return;
-        }
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        logger.info(req.getRequestURL().toString()+ " Before JWTauthorization filter");
-        chain.doFilter(req, res);
-        logger.info(req.getRequestURL().toString()+ " after JWTauthorization filter");
+
     }
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) throws ServiceRuntimeException {
         String token = request.getHeader(HEADER_STRING);
@@ -68,7 +67,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             }
             catch (io.jsonwebtoken.SignatureException s){
                 logger.error("Invalid access Token");
-                throw new ServiceRuntimeException("Invalid Access token");
+                throw new ServiceRuntimeException("Invalid Access token",s.fillInStackTrace());
             }catch(ArrayIndexOutOfBoundsException ae){
                 logger.error("Invalid access Token");
                 throw new ServiceRuntimeException("Invalid Access token");
@@ -84,6 +83,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                 return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
             }
             return null;
+        }
+        return null;
+    }
+
+    private String getJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7, bearerToken.length());
         }
         return null;
     }

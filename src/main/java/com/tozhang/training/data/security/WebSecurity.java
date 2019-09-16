@@ -151,7 +151,7 @@ public class WebSecurity {
             @Override
             protected void configure(HttpSecurity http) throws Exception {
                 HttpSecurity httpSecurity =
-                        http.csrf().disable().antMatcher("/saml/login").antMatcher("/saml/SSO").authorizeRequests()
+                        http.csrf().disable().antMatcher("/guest/signIn").antMatcher("/saml/SSO").authorizeRequests()
                                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                                 .antMatchers(SIGN_IN_URL).permitAll()
                                 .antMatchers("/invalidToken").permitAll()
@@ -165,7 +165,9 @@ public class WebSecurity {
 //                                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
 //                                .addFilterAfter(new JWTAuthorizationFilter(authenticationManager()), JWTAuthenticationFilter.class)
 //                                .addFilterAfter(transactionFilter,JWTAuthenticationFilter.class)//this is used for development.
-                                .exceptionHandling().accessDeniedPage("/error").and();
+                                .exceptionHandling()
+                                .authenticationEntryPoint(new MyAuthenticationEntryPoint())
+                                .accessDeniedPage("/error").and();
 
                 http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
             }

@@ -236,8 +236,7 @@ public class Guest{
         account = builder.account;
     }
 
-
-
+    private Guest(){};
 
 
 }
