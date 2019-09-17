@@ -1,19 +1,11 @@
 package com.tozhang.training.data.security;
 
-import com.tozhang.training.util.Constant;
-import com.tozhang.training.util.IDMResponse;
 import com.tozhang.training.util.ServiceRuntimeException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.BeanIds;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Component;
@@ -49,12 +41,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         try{
             authentication = getAuthentication(req);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            chain.doFilter(req, res);
+            if(authentication==null) throw new ServiceRuntimeException("Invalid Access token");
+
             logger.info(req.getRequestURL().toString()+ " after JWTauthorization filter");
         }catch (Exception e){
-            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED,
-                    e.getLocalizedMessage());
+            //res.setStatus(HttpServletResponse.SC_UNAUTHORIZED, e.getLocalizedMessage());
+            logger.error("Could not set user authentication in security context", e);
         }
+        chain.doFilter(req, res);
 
     }
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) throws ServiceRuntimeException {

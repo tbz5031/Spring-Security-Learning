@@ -166,7 +166,7 @@ public class WebSecurity {
 //                                .addFilterAfter(new JWTAuthorizationFilter(authenticationManager()), JWTAuthenticationFilter.class)
 //                                .addFilterAfter(transactionFilter,JWTAuthenticationFilter.class)//this is used for development.
                                 .exceptionHandling()
-                                .authenticationEntryPoint(new MyAuthenticationEntryPoint())
+//                                .authenticationEntryPoint(new MyAuthenticationEntryPoint())
                                 .accessDeniedPage("/error").and();
 
                 http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
