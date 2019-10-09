@@ -27,6 +27,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.saml.websso.WebSSOProfileOptions;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import com.tozhang.training.data.auth0.LogoutController;
@@ -79,7 +80,7 @@ public class WebSecurity {
 //        }
 
 
-        @Order(1)
+        @EnableWebSecurity
         public class AppSecurity extends WebSecurityConfigurerAdapter {
             /**
              * This is your auth0 domain (tenant you have created when registering with auth0 - account name)
@@ -150,24 +151,27 @@ public class WebSecurity {
 
             @Override
             protected void configure(HttpSecurity http) throws Exception {
-                HttpSecurity httpSecurity =
-                        http.csrf().disable().antMatcher("/guest/signIn").antMatcher("/saml/SSO").authorizeRequests()
-                                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                //HttpSecurity httpSecurity =
+                        http
+                                .authorizeRequests()
+                                .antMatchers(HttpMethod.POST,"/guest/signUp*").permitAll()
                                 .antMatchers(SIGN_IN_URL).permitAll()
                                 .antMatchers("/invalidToken").permitAll()
                                 .antMatchers("/index").permitAll()
                                 .antMatchers("/reservations").permitAll()
-                                .antMatchers("/callback", "/login", "/portal/home", "/saml/SSO").permitAll()
+                                .antMatchers("/callback", "/login", "/portal/home").permitAll()
                                 .anyRequest().authenticated()
                                 .and()
                                 // todo We’ll start by implementing the org.springframework.web.filter.GenericFilterBean.
                                 //  to customise filter, need to remove component.
 //                                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-//                                .addFilterAfter(new JWTAuthorizationFilter(authenticationManager()), JWTAuthenticationFilter.class)
+//                                .addFilterBefore(new JWTAuthorizationFilter(authenticationManager()), BasicAuthenticationFilter.class)
 //                                .addFilterAfter(transactionFilter,JWTAuthenticationFilter.class)//this is used for development.
                                 .exceptionHandling()
 //                                .authenticationEntryPoint(new MyAuthenticationEntryPoint())
-                                .accessDeniedPage("/error").and();
+                                .accessDeniedPage("/error")
+                                .and()
+                                .csrf().disable();
 
                 http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
             }

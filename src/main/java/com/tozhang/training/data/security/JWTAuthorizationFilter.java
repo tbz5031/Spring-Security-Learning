@@ -3,6 +3,8 @@ package com.tozhang.training.data.security;
 import com.tozhang.training.util.ServiceRuntimeException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
+import jdk.nashorn.internal.runtime.regexp.joni.Warnings;
+import org.assertj.core.error.future.Warning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.tozhang.training.data.security.SecurityConstants.*;
 
@@ -36,14 +40,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
-        logger.info(req.getRequestURL().toString()+ " Before JWTauthorization filter");
+        logger.info(req.getRequestURI()+ " Before JWTauthorization filter");
         UsernamePasswordAuthenticationToken authentication = null;
         try{
             authentication = getAuthentication(req);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            if(authentication==null) throw new ServiceRuntimeException("Invalid Access token");
+            if(authentication==null) logger.warn("Bearer token is missing");
 
-            logger.info(req.getRequestURL().toString()+ " after JWTauthorization filter");
+            logger.info(req.getRequestURI()+ " after JWTauthorization filter");
         }catch (Exception e){
             //res.setStatus(HttpServletResponse.SC_UNAUTHORIZED, e.getLocalizedMessage());
             logger.error("Could not set user authentication in security context", e);
