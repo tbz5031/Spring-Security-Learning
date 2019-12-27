@@ -1,5 +1,6 @@
 package com.tozhang.training.util;
 
+import com.tozhang.training.data.errorHandling.IDMException;
 import com.tozhang.training.data.webservice.GuestController;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
@@ -18,8 +19,8 @@ public class RestResponseEntityExceptionHandler
         extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value
-            = { ServiceRuntimeException.class})
-    protected ResponseEntity<Object> handleConflict(
+            = { IDMException.class})
+    public ResponseEntity<Object> handleConflict(
             ServiceRuntimeException ex, WebRequest request) {
         logger.error(ex.getMessage(), ex.fillInStackTrace());
         return new IDMResponse().Wrong(HttpStatus.NOT_FOUND, ex.getMessage());

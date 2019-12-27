@@ -9,24 +9,24 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 
-@SuppressWarnings("unused")
-@Controller
-public class myErrorController implements ErrorController {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private static final String PATH = "/error";
-
-    @RequestMapping("/error")
-    protected String error(final RedirectAttributes redirectAttributes) throws IOException {
-        logger.error("Handling error");
-        redirectAttributes.addFlashAttribute("error", true);
-        return "redirect:/index";
-    }
-
-    @Override
-    public String getErrorPath() {
-        return PATH;
-    }
-
-}
+//@SuppressWarnings("unused")
+//@Controller
+//public class myErrorController implements ErrorController {
+//
+//    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+//
+//    private static final String PATH = "/error";
+//
+////    @RequestMapping("/error")
+////    protected String error(final RedirectAttributes redirectAttributes) throws IOException {
+////        logger.error("Handling error");
+////        redirectAttributes.addFlashAttribute("error", true);
+////        return "redirect:/index";
+////    }
+//
+//    @Override
+//    public String getErrorPath() {
+//        return PATH;
+//    }
+//
+//}

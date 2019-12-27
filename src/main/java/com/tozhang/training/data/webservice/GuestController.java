@@ -1,12 +1,12 @@
 package com.tozhang.training.data.webservice;
 
-import com.auth0.AuthenticationController;
 import com.tozhang.training.data.entity.Guest;
 import com.tozhang.training.data.repository.GuestRepository;
 import com.tozhang.training.data.security.JWTService;
 import com.tozhang.training.data.security.SecurityConstants;
 import com.tozhang.training.data.service.GuestService;
 import com.tozhang.training.util.GuestUtil;
+import com.tozhang.training.data.errorHandling.IDMException;
 import com.tozhang.training.util.IDMResponse;
 import com.tozhang.training.util.ServiceRuntimeException;
 import org.apache.logging.log4j.LogManager;
@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
@@ -68,10 +65,10 @@ public class GuestController {
             }
         catch (ServiceRuntimeException e){
             logger.error(e.getMessage(),e.fillInStackTrace());
-            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"User already exist");
+            throw new IDMException("User Already Exists");
         }catch (Exception ex){
             logger.error(ex.getMessage(),ex.fillInStackTrace());
-            return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Other Error");
+            throw new IDMException("Other error");
         }
         return new IDMResponse().Correct(HttpStatus.OK, newGuest,"successfully added");
     }
@@ -112,11 +109,17 @@ public class GuestController {
              //todo Need to implement refreshtoken.
              //refresh_token = JWTService.jwtIssuer()
         }
-        else return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Not valid credential or username");
+        else {
+            throw new IDMException("Password is wrong");
+            //return new IDMResponse().Wrong(HttpStatus.BAD_REQUEST,"Not valid credential or username");
+        }
 
 
         return new IDMResponse().Correct(HttpStatus.OK,result,"Login Successfully");
     }
+
+
+
 
 
     public ResponseEntity callBackLogin(ResponseEntity response) throws IOException {
